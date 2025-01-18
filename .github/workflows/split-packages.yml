@@ -1,0 +1,77 @@
+name: 'Split packages'
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+jobs:
+  get_packages:
+    name: Get packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          coverage: none
+
+      - uses: actions/checkout@v4
+
+      - name: Get packages
+        id: get_json
+        run: echo "::set-output name=json::$(bin/get-packages)"
+
+      - name: Output packages
+        run: echo "${{ steps.get_json.outputs.json }}"
+    outputs:
+      matrix: ${{ steps.get_json.outputs.json }}
+
+  packages_split:
+    name: Split package ${{ matrix.package.name }}
+    needs: get_packages
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # without tag
+      - if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: "symplify/monorepo-split-github-action@v2.3.0"
+        with:
+          # ↓ split "src/Brickhouse/Console" directory
+          package_directory: '${{ matrix.package.directory }}'
+
+          # ↓ into https://github.com/brickhouse-php/console repository
+          repository_organization: '${{ matrix.package.organization }}'
+          repository_name: '${{ matrix.package.repository }}'
+
+          # ↓ the user signed under the split commit
+          user_name: "maxnatamo"
+          user_email: "me@maxtrier.dk"
+
+      # with tag
+      - if: "startsWith(github.ref, 'refs/tags/')"
+        uses: "symplify/monorepo-split-github-action@v2.3.0"
+        with:
+          tag: ${GITHUB_REF#refs/tags/}
+
+          # ↓ split "src/Brickhouse/Console" directory
+          package_directory: '${{ matrix.package.directory }}'
+
+          # ↓ into https://github.com/brickhouse-php/console repository
+          repository_organization: '${{ matrix.package.organization }}'
+          repository_name: '${{ matrix.package.repository }}'
+
+          # ↓ the user signed under the split commit
+          user_name: "maxnatamo"
+          user_email: "me@maxtrier.dk"

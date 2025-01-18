@@ -1,0 +1,44 @@
+{
+    "name": "brickhouse/config",
+    "description": "Configuration functionality for Brickhouse",
+    "license": "MIT",
+    "keywords": ["framework", "brickhouse", "mvc"],
+    "homepage": "https://github.com/brickhouse-php/brickhouse",
+    "support": {
+        "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+        "source": "https://github.com/brickhouse-php/brickhouse"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Max T. Kristiansen",
+            "email": "me@maxtrier.dk",
+            "role": "Author",
+            "homepage": "https://maxtrier.dk"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "brickhouse/core": "dev-main",
+        "brickhouse/support": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brickhouse\\Config\\": "src"
+        },
+        "classmap": [
+            "src/"
+        ],
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "brickhouse": {
+            "extensions": [
+                "\\Brickhouse\\Config\\Extension"
+            ]
+        }
+    }
+}

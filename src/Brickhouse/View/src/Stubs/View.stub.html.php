@@ -1,0 +1,1 @@
+<h1>View for ControllerName::ActionName</h1>

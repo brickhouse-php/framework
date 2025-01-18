@@ -1,0 +1,36 @@
+{
+    "name": "brickhouse/support",
+    "description": "Supporting data structures and utilities for Brickhouse",
+    "license": "MIT",
+    "keywords": ["framework", "brickhouse", "mvc"],
+    "homepage": "https://github.com/brickhouse-php/brickhouse",
+    "support": {
+        "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+        "source": "https://github.com/brickhouse-php/brickhouse"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Max T. Kristiansen",
+            "email": "me@maxtrier.dk",
+            "role": "Author",
+            "homepage": "https://maxtrier.dk"
+        }
+    ],
+    "require": {
+        "doctrine/inflector": "^2.0",
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brickhouse\\Support\\": "src"
+        },
+        "classmap": [
+            "src/"
+        ],
+        "files": [
+            "src/helpers.php"
+        ]
+    }
+}

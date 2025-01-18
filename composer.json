@@ -1,0 +1,153 @@
+{
+    "name": "brickhouse/framework",
+    "description": "Brickhouse is an MVC framework for PHP, made with developers in mind.",
+    "license": "MIT",
+    "keywords": [
+        "framework",
+        "brickhouse",
+        "mvc"
+    ],
+    "authors": [
+        {
+            "name": "Max T. Kristiansen",
+            "email": "me@maxtrier.dk",
+            "role": "Author",
+            "homepage": "https://maxtrier.dk"
+        }
+    ],
+    "homepage": "https://github.com/brickhouse-php/brickhouse",
+    "support": {
+        "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+        "source": "https://github.com/brickhouse-php/brickhouse"
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "require": {
+        "php": "^8.4",
+        "ext-ctype": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "amphp/parser": "^1.1",
+        "amphp/pipeline": "^1.2",
+        "amphp/socket": "^2.3",
+        "bramus/ansi-php": "^3.1",
+        "brickhouse/routing": "dev-main",
+        "brickhouse/view-engine": "dev-main",
+        "doctrine/inflector": "^2.0",
+        "league/flysystem": "^3.0",
+        "league/flysystem-memory": "^3.0",
+        "league/flysystem-path-prefixing": "^3.3",
+        "league/flysystem-read-only": "^3.3",
+        "monolog/monolog": "^3.8",
+        "nesbot/carbon": "^3.8.2",
+        "nunomaduro/collision": "^8.5",
+        "nunomaduro/termwind": "^2.3",
+        "pestphp/pest": "^3.7",
+        "psr/container": "^2.0",
+        "psr/event-dispatcher": "^1.0",
+        "symfony/console": "^7.2",
+        "symfony/finder": "^7.2",
+        "toolkit/pflag": "^2.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "symplify/monorepo-builder": "^11.2"
+    },
+    "replace": {
+        "brickhouse/channel": "self.version",
+        "brickhouse/config": "self.version",
+        "brickhouse/console": "self.version",
+        "brickhouse/container": "self.version",
+        "brickhouse/core": "self.version",
+        "brickhouse/database": "self.version",
+        "brickhouse/events": "self.version",
+        "brickhouse/filesystem": "self.version",
+        "brickhouse/http": "self.version",
+        "brickhouse/log": "self.version",
+        "brickhouse/reflection": "self.version",
+        "brickhouse/support": "self.version",
+        "brickhouse/testing": "self.version",
+        "brickhouse/view": "self.version"
+    },
+    "provide": {
+        "psr/container-implementation": "1.1|2.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Brickhouse\\": "src/Brickhouse/",
+            "Brickhouse\\Channel\\": "src/Brickhouse/Channel/src",
+            "Brickhouse\\Config\\": "src/Brickhouse/Config/src",
+            "Brickhouse\\Console\\": "src/Brickhouse/Console/src",
+            "Brickhouse\\Container\\": "src/Brickhouse/Container/src",
+            "Brickhouse\\Core\\": "src/Brickhouse/Core/src",
+            "Brickhouse\\Database\\": "src/Brickhouse/Database/src",
+            "Brickhouse\\Database\\Tests\\": "src/Brickhouse/Database/tests",
+            "Brickhouse\\Events\\": "src/Brickhouse/Events/src",
+            "Brickhouse\\Filesystem\\": "src/Brickhouse/Filesystem/src",
+            "Brickhouse\\Http\\": "src/Brickhouse/Http/src",
+            "Brickhouse\\Log\\": "src/Brickhouse/Log/src",
+            "Brickhouse\\Reflection\\": "src/Brickhouse/Reflection/src",
+            "Brickhouse\\Support\\": "src/Brickhouse/Support/src",
+            "Brickhouse\\Testing\\": "src/Brickhouse/Testing/src/src",
+            "Brickhouse\\View\\": "src/Brickhouse/View/src",
+            "Tests\\": "src/Brickhouse/Support/test"
+        },
+        "classmap": [
+            "src/Brickhouse/Channel/src/",
+            "src/Brickhouse/Config/src/",
+            "src/Brickhouse/Console/src/",
+            "src/Brickhouse/Container/src/",
+            "src/Brickhouse/Core/src/",
+            "src/Brickhouse/Database/src/",
+            "src/Brickhouse/Events/src/",
+            "src/Brickhouse/Filesystem/src/",
+            "src/Brickhouse/Http/src/",
+            "src/Brickhouse/Log/src/",
+            "src/Brickhouse/Reflection/src/",
+            "src/Brickhouse/Support/src/",
+            "src/Brickhouse/Testing/src/",
+            "src/Brickhouse/View/src/"
+        ],
+        "files": [
+            "src/Brickhouse/Config/src/helpers.php",
+            "src/Brickhouse/Console/src/Prompts/helpers.php",
+            "src/Brickhouse/Core/src/helpers.php",
+            "src/Brickhouse/Database/src/helpers.php",
+            "src/Brickhouse/Events/src/helpers.php",
+            "src/Brickhouse/Http/src/helpers.php",
+            "src/Brickhouse/Support/src/helpers.php",
+            "src/Brickhouse/View/src/helpers.php"
+        ],
+        "exclude-from-classmap": [
+            "**/*.stub.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Brickhouse\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "brickhouse": {
+            "extensions": [
+                "\\Brickhouse\\Channel\\Extension",
+                "\\Brickhouse\\Channel\\Websocket\\Extension",
+                "\\Brickhouse\\Config\\Extension",
+                "\\Brickhouse\\Database\\Extension",
+                "\\Brickhouse\\Http\\Extension",
+                "\\Brickhouse\\Log\\Extension",
+                "\\Brickhouse\\View\\Extension"
+            ]
+        }
+    }
+}

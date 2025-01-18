@@ -1,0 +1,48 @@
+#!/usr/bin/env php
+<?php
+
+const PACKAGES_DIRECTORY = __DIR__ . '/../src/Brickhouse/';
+
+/**
+ * Gets the package manifest within the given directory.
+ *
+ * @return array<string,mixed>
+ */
+function getPackageManifest(string $directory): array
+{
+    $packageManifestPath = $directory . DIRECTORY_SEPARATOR . 'composer.json';
+
+    return json_decode(file_get_contents($packageManifestPath), true);
+}
+
+/**
+ * @return array<int, array{
+ *     directory: string,
+ *     organization: string,
+ *     repository: string
+ * }>
+ */
+function getPackages(): array
+{
+    $packages = [];
+    $directoryIterator = new DirectoryIterator(realpath(PACKAGES_DIRECTORY));
+
+    foreach ($directoryIterator as $packageDirectory) {
+        if ($packageDirectory->isDot()) {
+            continue;
+        }
+
+        $manifest = getPackageManifest($packageDirectory->getRealPath());
+        $packageName = str_replace("brickhouse/", "", $manifest['name']);
+
+        $packages[] = [
+            'directory'  => 'src/Brickhouse' . DIRECTORY_SEPARATOR . $packageDirectory->getBasename(),
+            'organization' => 'brickhouse-php',
+            'repository' => $packageName,
+        ];
+    }
+
+    return $packages;
+}
+
+echo json_encode(getPackages());

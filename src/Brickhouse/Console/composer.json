@@ -1,0 +1,38 @@
+{
+    "name": "brickhouse/console",
+    "description": "Console functionality for Brickhouse",
+    "license": "MIT",
+    "keywords": ["framework", "brickhouse", "mvc"],
+    "homepage": "https://github.com/brickhouse-php/brickhouse",
+    "support": {
+        "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+        "source": "https://github.com/brickhouse-php/brickhouse"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Max T. Kristiansen",
+            "email": "me@maxtrier.dk",
+            "role": "Author",
+            "homepage": "https://maxtrier.dk"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "toolkit/pflag": "^2.0",
+        "symfony/console": "^7.2",
+        "nunomaduro/termwind": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brickhouse\\Console\\": "src"
+        },
+        "classmap": [
+            "src/"
+        ],
+        "files": [
+            "src/Prompts/helpers.php"
+        ]
+    }
+}

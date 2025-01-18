@@ -1,0 +1,43 @@
+{
+    "name": "brickhouse/core",
+    "description": "Foundation for all Brickhouse hosting",
+    "license": "MIT",
+    "keywords": ["framework", "brickhouse", "mvc"],
+    "homepage": "https://github.com/brickhouse-php/brickhouse",
+    "support": {
+        "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+        "source": "https://github.com/brickhouse-php/brickhouse"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Max T. Kristiansen",
+            "email": "me@maxtrier.dk",
+            "role": "Author",
+            "homepage": "https://maxtrier.dk"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "nunomaduro/collision": "^8.5",
+        "brickhouse/config": "dev-main",
+        "brickhouse/console": "dev-main",
+        "brickhouse/container": "dev-main",
+        "brickhouse/core": "dev-main",
+        "brickhouse/events": "dev-main",
+        "brickhouse/http": "dev-main",
+        "brickhouse/support": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brickhouse\\Core\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ],
+        "classmap": [
+            "src/"
+        ]
+    }
+}
