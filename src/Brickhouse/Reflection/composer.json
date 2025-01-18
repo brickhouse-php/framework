@@ -28,5 +28,8 @@
         "classmap": [
             "src/"
         ]
+    },
+    "suggest": {
+        "brickhouse/core": "Required to reflect on classes defined in Composer"
     }
 }

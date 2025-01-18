@@ -19,8 +19,9 @@
         }
     ],
     "require": {
-        "brickhouse/view-engine": "dev-main",
-        "php": "^8.4"
+        "php": "^8.4",
+        "brickhouse/core": "dev-main",
+        "brickhouse/view-engine": "dev-main"
     },
     "autoload": {
         "psr-4": {

@@ -15,9 +15,7 @@ class Extension extends \Brickhouse\Core\Extension
      */
     public string $name = "brickhouse/log";
 
-    public function __construct(private readonly Application $application)
-    {
-    }
+    public function __construct(private readonly Application $application) {}
 
     /**
      * Invoked before the application has started.

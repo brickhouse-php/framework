@@ -20,6 +20,7 @@
     ],
     "require": {
         "php": "^8.4",
+        "brickhouse/core": "dev-main",
         "pestphp/pest": "^3.7"
     },
     "autoload": {

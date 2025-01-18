@@ -21,6 +21,7 @@
     "require": {
         "php": "^8.4",
         "bramus/ansi-php": "^3.1",
+        "brickhouse/core": "dev-main",
         "monolog/monolog": "^3.8"
     },
     "autoload": {
