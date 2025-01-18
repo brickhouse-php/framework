@@ -23,7 +23,6 @@
         "brickhouse/config": "dev-main",
         "brickhouse/console": "dev-main",
         "brickhouse/container": "dev-main",
-        "brickhouse/core": "dev-main",
         "brickhouse/events": "dev-main",
         "brickhouse/http": "dev-main",
         "brickhouse/reflection": "dev-main",
