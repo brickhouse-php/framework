@@ -93,6 +93,15 @@ class Application extends Container
     }
 
     /**
+     * Deconstruct the application and reset global state.
+     */
+    public final function __destruct()
+    {
+        self::$container = null;
+        self::$instance = null;
+    }
+
+    /**
      * Boot the given kernel on the application.
      *
      * @param   Kernel|class-string<Kernel>     $kernel     Kernel instance or class to boot.
