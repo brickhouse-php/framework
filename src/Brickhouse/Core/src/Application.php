@@ -5,6 +5,7 @@ namespace Brickhouse\Core;
 use Brickhouse\Container\Container;
 use Brickhouse\Core\Console\Commands;
 use Brickhouse\Core\Events;
+use Brickhouse\Http\HttpKernel;
 use Composer\Autoload\ClassLoader;
 
 class Application extends Container
@@ -232,5 +233,15 @@ class Application extends Container
             isset($_ENV['APP_BASE_PATH']) => $_ENV['APP_BASE_PATH'],
             default => dirname(array_keys(ClassLoader::getRegisteredLoaders())[0]),
         };
+    }
+
+    /**
+     * Reads the current request from superglobals, routes it's to the correct action, and sends the response back to the client.
+     *
+     * @return int
+     */
+    public function handleRequest(): int
+    {
+        return $this->kernel(HttpKernel::class);
     }
 }

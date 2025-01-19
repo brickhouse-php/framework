@@ -13,15 +13,8 @@ final readonly class RequestFactory
      */
     public function create(): Request
     {
-        $psrRequest = ServerRequestFactory::fromGlobals();
-
-        return new Request(
-            method: $psrRequest->getMethod(),
-            uri: \League\Uri\Uri::fromBaseUri($psrRequest->getUri()->__toString()),
-            headers: HttpHeaderBag::parseArray($psrRequest->getHeaders()),
-            body: $psrRequest->getBody(),
-            contentLength: $psrRequest->getBody()->getSize(),
-            protocol: $psrRequest->getProtocolVersion(),
+        return Request::psr7(
+            ServerRequestFactory::fromGlobals()
         );
     }
 }
