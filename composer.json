@@ -36,6 +36,7 @@
         "brickhouse/routing": "dev-main",
         "brickhouse/view-engine": "dev-main",
         "doctrine/inflector": "^2.0",
+        "laminas/laminas-diactoros": "^3.5",
         "league/flysystem": "^3.0",
         "league/flysystem-memory": "^3.0",
         "league/flysystem-path-prefixing": "^3.3",

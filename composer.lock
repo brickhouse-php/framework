@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "50ca10a83c105e5f9346c6958a1be411",
+    "content-hash": "67f48ef610dd86baca16987916461c17",
     "packages": [
         {
             "name": "amphp/amp",
@@ -315,241 +315,6 @@
                 }
             ],
             "time": "2024-12-21T01:15:34+00:00"
-        },
-        {
-            "name": "amphp/hpack",
-            "version": "v3.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amphp/hpack.git",
-                "reference": "4f293064b15682a2b178b1367ddf0b8b5feb0239"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amphp/hpack/zipball/4f293064b15682a2b178b1367ddf0b8b5feb0239",
-                "reference": "4f293064b15682a2b178b1367ddf0b8b5feb0239",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "amphp/php-cs-fixer-config": "^2",
-                "http2jp/hpack-test-case": "^1",
-                "nikic/php-fuzzer": "^0.0.10",
-                "phpunit/phpunit": "^7 | ^8 | ^9"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Amp\\Http\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniel Lowrey",
-                    "email": "rdlowrey@php.net"
-                },
-                {
-                    "name": "Bob Weinand"
-                },
-                {
-                    "name": "Niklas Keller",
-                    "email": "me@kelunik.com"
-                },
-                {
-                    "name": "Aaron Piotrowski",
-                    "email": "aaron@trowski.com"
-                }
-            ],
-            "description": "HTTP/2 HPack implementation.",
-            "homepage": "https://github.com/amphp/hpack",
-            "keywords": [
-                "headers",
-                "hpack",
-                "http-2"
-            ],
-            "support": {
-                "issues": "https://github.com/amphp/hpack/issues",
-                "source": "https://github.com/amphp/hpack/tree/v3.2.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/amphp",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-03-21T19:00:16+00:00"
-        },
-        {
-            "name": "amphp/http",
-            "version": "v2.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amphp/http.git",
-                "reference": "3680d80bd38b5d6f3c2cef2214ca6dd6cef26588"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http/zipball/3680d80bd38b5d6f3c2cef2214ca6dd6cef26588",
-                "reference": "3680d80bd38b5d6f3c2cef2214ca6dd6cef26588",
-                "shasum": ""
-            },
-            "require": {
-                "amphp/hpack": "^3",
-                "amphp/parser": "^1.1",
-                "league/uri-components": "^2.4.2 | ^7.1",
-                "php": ">=8.1",
-                "psr/http-message": "^1 | ^2"
-            },
-            "require-dev": {
-                "amphp/php-cs-fixer-config": "^2",
-                "league/uri": "^6.8 | ^7.1",
-                "phpunit/phpunit": "^9",
-                "psalm/phar": "^5.26.1"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/functions.php",
-                    "src/Internal/constants.php"
-                ],
-                "psr-4": {
-                    "Amp\\Http\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Niklas Keller",
-                    "email": "me@kelunik.com"
-                },
-                {
-                    "name": "Aaron Piotrowski",
-                    "email": "aaron@trowski.com"
-                }
-            ],
-            "description": "Basic HTTP primitives which can be shared by servers and clients.",
-            "support": {
-                "issues": "https://github.com/amphp/http/issues",
-                "source": "https://github.com/amphp/http/tree/v2.1.2"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/amphp",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-11-23T14:57:26+00:00"
-        },
-        {
-            "name": "amphp/http-server",
-            "version": "v3.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amphp/http-server.git",
-                "reference": "c60cde9a1e331f539b7ef5a7705f42092e646f90"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-server/zipball/c60cde9a1e331f539b7ef5a7705f42092e646f90",
-                "reference": "c60cde9a1e331f539b7ef5a7705f42092e646f90",
-                "shasum": ""
-            },
-            "require": {
-                "amphp/amp": "^3",
-                "amphp/byte-stream": "^2",
-                "amphp/cache": "^2",
-                "amphp/hpack": "^3",
-                "amphp/http": "^2",
-                "amphp/pipeline": "^1",
-                "amphp/socket": "^2.1",
-                "amphp/sync": "^2.2",
-                "league/uri": "^7.1",
-                "league/uri-interfaces": "^7.1",
-                "php": ">=8.1",
-                "psr/http-message": "^1 | ^2",
-                "psr/log": "^1 | ^2 | ^3",
-                "revolt/event-loop": "^1"
-            },
-            "require-dev": {
-                "amphp/http-client": "^5",
-                "amphp/log": "^2",
-                "amphp/php-cs-fixer-config": "^2",
-                "amphp/phpunit-util": "^3",
-                "league/uri-components": "^7.1",
-                "monolog/monolog": "^3",
-                "phpunit/phpunit": "^9",
-                "psalm/phar": "~5.23"
-            },
-            "suggest": {
-                "ext-zlib": "Allows GZip compression of response bodies"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Driver/functions.php",
-                    "src/Middleware/functions.php",
-                    "src/functions.php"
-                ],
-                "psr-4": {
-                    "Amp\\Http\\Server\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniel Lowrey",
-                    "email": "rdlowrey@php.net"
-                },
-                {
-                    "name": "Bob Weinand"
-                },
-                {
-                    "name": "Niklas Keller",
-                    "email": "me@kelunik.com"
-                },
-                {
-                    "name": "Aaron Piotrowski",
-                    "email": "aaron@trowski.com"
-                }
-            ],
-            "description": "A non-blocking HTTP application server for PHP based on Amp.",
-            "homepage": "https://github.com/amphp/http-server",
-            "keywords": [
-                "amp",
-                "amphp",
-                "async",
-                "http",
-                "non-blocking",
-                "server"
-            ],
-            "support": {
-                "issues": "https://github.com/amphp/http-server/issues",
-                "source": "https://github.com/amphp/http-server/tree/v3.4.2"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/amphp",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-12-31T16:35:28+00:00"
         },
         {
             "name": "amphp/parser",
@@ -966,174 +731,6 @@
             "time": "2024-08-03T19:31:26+00:00"
         },
         {
-            "name": "amphp/websocket",
-            "version": "v2.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amphp/websocket.git",
-                "reference": "963904b6a883c4b62d9222d1d9749814fac96a3b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amphp/websocket/zipball/963904b6a883c4b62d9222d1d9749814fac96a3b",
-                "reference": "963904b6a883c4b62d9222d1d9749814fac96a3b",
-                "shasum": ""
-            },
-            "require": {
-                "amphp/amp": "^3",
-                "amphp/byte-stream": "^2",
-                "amphp/parser": "^1",
-                "amphp/pipeline": "^1",
-                "amphp/socket": "^2",
-                "php": ">=8.1",
-                "revolt/event-loop": "^1"
-            },
-            "require-dev": {
-                "amphp/php-cs-fixer-config": "^2",
-                "amphp/phpunit-util": "^3",
-                "phpunit/phpunit": "^9",
-                "psalm/phar": "^5.18"
-            },
-            "suggest": {
-                "ext-zlib": "Required for compression"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/functions.php"
-                ],
-                "psr-4": {
-                    "Amp\\Websocket\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Aaron Piotrowski",
-                    "email": "aaron@trowski.com"
-                },
-                {
-                    "name": "Niklas Keller",
-                    "email": "me@kelunik.com"
-                },
-                {
-                    "name": "Bob Weinand",
-                    "email": "bobwei9@hotmail.com"
-                }
-            ],
-            "description": "Shared code for websocket servers and clients.",
-            "homepage": "https://github.com/amphp/websocket",
-            "keywords": [
-                "amp",
-                "amphp",
-                "async",
-                "http",
-                "non-blocking",
-                "websocket"
-            ],
-            "support": {
-                "issues": "https://github.com/amphp/websocket/issues",
-                "source": "https://github.com/amphp/websocket/tree/v2.0.4"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/amphp",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-10-28T21:28:45+00:00"
-        },
-        {
-            "name": "amphp/websocket-server",
-            "version": "v4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amphp/websocket-server.git",
-                "reference": "d713c75b2625142dfa23c21b31d970c00a2ad789"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amphp/websocket-server/zipball/d713c75b2625142dfa23c21b31d970c00a2ad789",
-                "reference": "d713c75b2625142dfa23c21b31d970c00a2ad789",
-                "shasum": ""
-            },
-            "require": {
-                "amphp/amp": "^3",
-                "amphp/byte-stream": "^2.1",
-                "amphp/http": "^2.1",
-                "amphp/http-server": "^3.2",
-                "amphp/socket": "^2.2",
-                "amphp/websocket": "^2",
-                "php": ">=8.1",
-                "psr/log": "^1|^2|^3",
-                "revolt/event-loop": "^1"
-            },
-            "require-dev": {
-                "amphp/http-client": "^5",
-                "amphp/http-server-router": "^2",
-                "amphp/http-server-static-content": "^2",
-                "amphp/log": "^2",
-                "amphp/php-cs-fixer-config": "^2",
-                "amphp/phpunit-util": "^3",
-                "amphp/websocket-client": "^2",
-                "colinodell/psr-testlogger": "^1.2",
-                "league/climate": "^3",
-                "phpunit/phpunit": "^9",
-                "psalm/phar": "^5.18"
-            },
-            "suggest": {
-                "ext-zlib": "Required for compression"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Amp\\Websocket\\Server\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniel Lowrey",
-                    "email": "rdlowrey@php.net"
-                },
-                {
-                    "name": "Bob Weinand"
-                },
-                {
-                    "name": "Niklas Keller",
-                    "email": "me@kelunik.com"
-                },
-                {
-                    "name": "Aaron Piotrowski",
-                    "email": "aaron@trowski.com"
-                }
-            ],
-            "description": "Websocket server for Amp's HTTP server.",
-            "homepage": "https://github.com/amphp/websocket-server",
-            "keywords": [
-                "http",
-                "server",
-                "websocket"
-            ],
-            "support": {
-                "issues": "https://github.com/amphp/websocket-server/issues",
-                "source": "https://github.com/amphp/websocket-server/tree/v4.0.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/amphp",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-12-29T00:58:49+00:00"
-        },
-        {
             "name": "bramus/ansi-php",
             "version": "3.1",
             "source": {
@@ -1275,13 +872,13 @@
             "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/brickhouse-php/brickhouse-routing.git",
-                "reference": "dca4fba27eccc3c76b2362254ddf337053ab3cba"
+                "url": "https://github.com/brickhouse-php/routing.git",
+                "reference": "06496dabd7d381ee48620769e6e2b463bc6a5d9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxnatamo/brickhouse-routing/zipball/dca4fba27eccc3c76b2362254ddf337053ab3cba",
-                "reference": "dca4fba27eccc3c76b2362254ddf337053ab3cba",
+                "url": "https://api.github.com/repos/brickhouse-php/routing/zipball/06496dabd7d381ee48620769e6e2b463bc6a5d9c",
+                "reference": "06496dabd7d381ee48620769e6e2b463bc6a5d9c",
                 "shasum": ""
             },
             "require": {
@@ -1316,7 +913,7 @@
                 }
             ],
             "description": "Routing mechanism for Brickhouse applications",
-            "homepage": "https://github.com/brickhouse-php/brickhouse-routing",
+            "homepage": "https://github.com/brickhouse-php/routing",
             "keywords": [
                 "brickhouse",
                 "framework",
@@ -1324,22 +921,22 @@
                 "routing"
             ],
             "support": {
-                "issues": "https://github.com/brickhouse-php/brickhouse-routing/issues",
-                "source": "https://github.com/brickhouse-php/brickhouse-routing"
+                "issues": "https://github.com/brickhouse-php/routing/issues",
+                "source": "https://github.com/brickhouse-php/routing"
             },
-            "time": "2025-01-12T08:24:26+00:00"
+            "time": "2025-01-18T11:39:50+00:00"
         },
         {
             "name": "brickhouse/view-engine",
             "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/brickhouse-php/brickhouse-view-engine.git",
+                "url": "https://github.com/brickhouse-php/view-engine.git",
                 "reference": "09cf35bdb469febc2ec4eb445659ff8803b83333"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxnatamo/brickhouse-view-engine/zipball/09cf35bdb469febc2ec4eb445659ff8803b83333",
+                "url": "https://api.github.com/repos/brickhouse-php/view-engine/zipball/09cf35bdb469febc2ec4eb445659ff8803b83333",
                 "reference": "09cf35bdb469febc2ec4eb445659ff8803b83333",
                 "shasum": ""
             },
@@ -1376,7 +973,7 @@
                 }
             ],
             "description": "Frontend functionality for Brickhouse",
-            "homepage": "https://github.com/brickhouse-php/brickhouse-view-engine",
+            "homepage": "https://github.com/maxnatamo/brickhouse-view-engine",
             "keywords": [
                 "brickhouse",
                 "framework",
@@ -1384,8 +981,8 @@
                 "templating"
             ],
             "support": {
-                "issues": "https://github.com/brickhouse-php/brickhouse-view-engine/issues",
-                "source": "https://github.com/brickhouse-php/brickhouse-view-engine"
+                "issues": "https://github.com/maxnatamo/brickhouse-view-engine/issues",
+                "source": "https://github.com/maxnatamo/brickhouse-view-engine"
             },
             "time": "2025-01-17T18:31:37+00:00"
         },
@@ -2202,6 +1799,94 @@
             "time": "2023-02-03T21:26:53+00:00"
         },
         {
+            "name": "laminas/laminas-diactoros",
+            "version": "3.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-diactoros.git",
+                "reference": "143a16306602ce56b8b092a7914fef03c37f9ed2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/143a16306602ce56b8b092a7914fef03c37f9ed2",
+                "reference": "143a16306602ce56b8b092a7914fef03c37f9ed2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
+                "psr/http-factory": "^1.1",
+                "psr/http-message": "^1.1 || ^2.0"
+            },
+            "conflict": {
+                "amphp/amp": "<2.6.4"
+            },
+            "provide": {
+                "psr/http-factory-implementation": "^1.0",
+                "psr/http-message-implementation": "^1.1 || ^2.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-gd": "*",
+                "ext-libxml": "*",
+                "http-interop/http-factory-tests": "^2.2.0",
+                "laminas/laminas-coding-standard": "~2.5.0",
+                "php-http/psr7-integration-tests": "^1.4.0",
+                "phpunit/phpunit": "^10.5.36",
+                "psalm/plugin-phpunit": "^0.19.0",
+                "vimeo/psalm": "^5.26.1"
+            },
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "module": "Laminas\\Diactoros",
+                    "config-provider": "Laminas\\Diactoros\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions/create_uploaded_file.php",
+                    "src/functions/marshal_headers_from_sapi.php",
+                    "src/functions/marshal_method_from_sapi.php",
+                    "src/functions/marshal_protocol_version_from_sapi.php",
+                    "src/functions/normalize_server.php",
+                    "src/functions/normalize_uploaded_files.php",
+                    "src/functions/parse_cookie_header.php"
+                ],
+                "psr-4": {
+                    "Laminas\\Diactoros\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "PSR HTTP Message implementations",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "http",
+                "laminas",
+                "psr",
+                "psr-17",
+                "psr-7"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-diactoros/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-diactoros/issues",
+                "rss": "https://github.com/laminas/laminas-diactoros/releases.atom",
+                "source": "https://github.com/laminas/laminas-diactoros"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2024-10-14T11:59:49+00:00"
+        },
+        {
             "name": "league/flysystem",
             "version": "3.29.1",
             "source": {
@@ -2615,88 +2300,6 @@
             "funding": [
                 {
                     "url": "https://github.com/sponsors/nyamsprod",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-12-08T08:40:02+00:00"
-        },
-        {
-            "name": "league/uri-components",
-            "version": "7.5.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/uri-components.git",
-                "reference": "4aabf0e2f2f9421ffcacab35be33e4fb5e63c44f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri-components/zipball/4aabf0e2f2f9421ffcacab35be33e4fb5e63c44f",
-                "reference": "4aabf0e2f2f9421ffcacab35be33e4fb5e63c44f",
-                "shasum": ""
-            },
-            "require": {
-                "league/uri": "^7.5",
-                "php": "^8.1"
-            },
-            "suggest": {
-                "ext-bcmath": "to improve IPV4 host parsing",
-                "ext-fileinfo": "to create Data URI from file contennts",
-                "ext-gmp": "to improve IPV4 host parsing",
-                "ext-intl": "to handle IDN host with the best performance",
-                "ext-mbstring": "to use the sorting algorithm of URLSearchParams",
-                "jeremykendall/php-domain-parser": "to resolve Public Suffix and Top Level Domain",
-                "php-64bit": "to improve IPV4 host parsing",
-                "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "7.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "League\\Uri\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ignace Nyamagana Butera",
-                    "email": "nyamsprod@gmail.com",
-                    "homepage": "https://nyamsprod.com"
-                }
-            ],
-            "description": "URI components manipulation library",
-            "homepage": "http://uri.thephpleague.com",
-            "keywords": [
-                "authority",
-                "components",
-                "fragment",
-                "host",
-                "middleware",
-                "modifier",
-                "path",
-                "port",
-                "query",
-                "rfc3986",
-                "scheme",
-                "uri",
-                "url",
-                "userinfo"
-            ],
-            "support": {
-                "docs": "https://uri.thephpleague.com",
-                "forum": "https://thephpleague.slack.com",
-                "issues": "https://github.com/thephpleague/uri-src/issues",
-                "source": "https://github.com/thephpleague/uri-components/tree/7.5.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/nyamsprod",
                     "type": "github"
                 }
             ],
@@ -3117,56 +2720,6 @@
                 }
             ],
             "time": "2024-12-27T09:25:35+00:00"
-        },
-        {
-            "name": "nikic/fast-route",
-            "version": "v1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nikic/FastRoute.git",
-                "reference": "181d480e08d9476e61381e04a71b34dc0432e812"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/181d480e08d9476e61381e04a71b34dc0432e812",
-                "reference": "181d480e08d9476e61381e04a71b34dc0432e812",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35|~5.7"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/functions.php"
-                ],
-                "psr-4": {
-                    "FastRoute\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Nikita Popov",
-                    "email": "nikic@php.net"
-                }
-            ],
-            "description": "Fast request router for PHP",
-            "keywords": [
-                "router",
-                "routing"
-            ],
-            "support": {
-                "issues": "https://github.com/nikic/FastRoute/issues",
-                "source": "https://github.com/nikic/FastRoute/tree/master"
-            },
-            "time": "2018-02-13T20:26:39+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -6985,87 +6538,6 @@
             "time": "2024-11-06T14:24:19+00:00"
         },
         {
-            "name": "symfony/routing",
-            "version": "v7.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/routing.git",
-                "reference": "e10a2450fa957af6c448b9b93c9010a4e4c0725e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/routing/zipball/e10a2450fa957af6c448b9b93c9010a4e4c0725e",
-                "reference": "e10a2450fa957af6c448b9b93c9010a4e4c0725e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2",
-                "symfony/deprecation-contracts": "^2.5|^3"
-            },
-            "conflict": {
-                "symfony/config": "<6.4",
-                "symfony/dependency-injection": "<6.4",
-                "symfony/yaml": "<6.4"
-            },
-            "require-dev": {
-                "psr/log": "^1|^2|^3",
-                "symfony/config": "^6.4|^7.0",
-                "symfony/dependency-injection": "^6.4|^7.0",
-                "symfony/expression-language": "^6.4|^7.0",
-                "symfony/http-foundation": "^6.4|^7.0",
-                "symfony/yaml": "^6.4|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Routing\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Maps an HTTP request to a set of configuration variables",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "router",
-                "routing",
-                "uri",
-                "url"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/routing/tree/v7.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-11-25T11:08:51+00:00"
-        },
-        {
             "name": "symfony/service-contracts",
             "version": "v3.5.1",
             "source": {
@@ -7848,64 +7320,10 @@
                 }
             ],
             "time": "2024-08-23T03:19:18+00:00"
-        },
-        {
-            "name": "testcontainers/testcontainers",
-            "version": "0.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/testcontainers/testcontainers-php.git",
-                "reference": "68a2d6d47c0116e1237b575a7f5a08864aa23f90"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/testcontainers/testcontainers-php/zipball/68a2d6d47c0116e1237b575a7f5a08864aa23f90",
-                "reference": "68a2d6d47c0116e1237b575a7f5a08864aa23f90",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 8.1",
-                "symfony/process": "^5.0|^6.0|^7.0"
-            },
-            "require-dev": {
-                "brianium/paratest": "^6.6",
-                "friendsofphp/php-cs-fixer": "^3.12",
-                "phpstan/extension-installer": "^1.2",
-                "phpstan/phpstan": "^1.8",
-                "phpstan/phpstan-phpunit": "^1.1",
-                "phpunit/phpunit": "^9.5",
-                "predis/predis": "^3.0 || ^2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Testcontainers\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Soner Sayakci",
-                    "email": "github@shyim.de"
-                }
-            ],
-            "description": "Testcontainers implementation in PHP",
-            "keywords": [
-                "docker",
-                "testcontainers"
-            ],
-            "support": {
-                "issues": "https://github.com/testcontainers/testcontainers-php/issues",
-                "source": "https://github.com/testcontainers/testcontainers-php/tree/0.2.0"
-            },
-            "time": "2024-08-05T19:35:10+00:00"
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "brickhouse/routing": 20,
         "brickhouse/view-engine": 20
@@ -7913,11 +7331,11 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
+        "php": "^8.4",
         "ext-ctype": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
-        "ext-pdo": "*",
-        "php": "^8.4"
+        "ext-pdo": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

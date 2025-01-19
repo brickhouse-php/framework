@@ -42,6 +42,14 @@ class Serve extends Command
     public int $port = 8000;
 
     /**
+     * Defines where the `public/` is placed.
+     *
+     * @var string
+     */
+    #[Option("public", input: InputOption::REQUIRED, description: 'Defines where the "public/" is placed.')]
+    public string $publicDirectory = "public/";
+
+    /**
      * Execute the console command.
      */
     public function handle(): int
@@ -57,12 +65,8 @@ class Serve extends Command
         $this->notice("Currently running in <span class='font-bold'>{$env}</span> environment{$debugMode}.");
         $this->comment("Press Ctrl+C to stop the server.");
 
-        return Application::current()->kernel(
-            HttpKernel::class,
-            [
-                'hostname' => $this->hostname,
-                'port' => $this->port,
-            ]
-        );
+        passthru("php -S {$this->hostname}:{$this->port} -t {$this->publicDirectory}", $statusCode);
+
+        return $statusCode;
     }
 }
