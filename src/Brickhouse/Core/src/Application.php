@@ -74,7 +74,7 @@ class Application extends Container
      *
      * @param   string                              $basePath
      */
-    public function __construct(string $basePath)
+    public final function __construct(string $basePath)
     {
         /**
          * @var Application $app
@@ -208,17 +208,17 @@ class Application extends Container
     }
 
     /**
-     * Creates a builder for configuring the application.
+     * Creates a new `Application` instance.
      *
      * @param string|null   $basePath       Optional base path for all runtime path resolving.
      *
-     * @return ApplicationBuilder
+     * @return static
      */
-    public static function configure(?string $basePath = null): ApplicationBuilder
+    public static function create(?string $basePath = null): static
     {
         $basePath ??= self::inferBasePath();
 
-        return new ApplicationBuilder($basePath);
+        return new static($basePath);
     }
 
     /**
