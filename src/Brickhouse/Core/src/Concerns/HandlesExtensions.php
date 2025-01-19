@@ -4,7 +4,6 @@ namespace Brickhouse\Core\Concerns;
 
 use Brickhouse\Core\Extension;
 use Brickhouse\Support\Collection;
-use Symfony\Component\Finder\Finder;
 
 trait HandlesExtensions
 {
@@ -135,20 +134,15 @@ trait HandlesExtensions
      */
     protected function findExtensions(): array
     {
-        $finder = new Finder();
-        $finder->files()
-            ->in([
-                app()->vendorPath . '/*/*',
-                app()->basePath,
-            ])
-            ->name('composer.json')
-            ->ignoreVCS(false)
-            ->ignoreUnreadableDirs();
+        $packages = [
+            ...glob(path(app()->vendorPath, '*', '*', 'composer.json')),
+            ...glob(path(app()->basePath, 'composer.json')),
+        ];
 
         /** @var array<int,class-string<Extension>> $extensions */
         $extensions = [];
 
-        foreach ($finder as $composer) {
+        foreach ($packages as $composer) {
             $content = json_decode(
                 file_get_contents($composer),
                 associative: true
