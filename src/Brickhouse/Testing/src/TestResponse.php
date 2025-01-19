@@ -12,6 +12,7 @@ class TestResponse extends Response
         parent::__construct(
             $response->status,
             $response->headers,
+            $response->content(),
             $response->contentLength,
             $response->protocol
         );

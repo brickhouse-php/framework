@@ -16,8 +16,7 @@ class HttpKernel implements Kernel
         $requestFactory = resolve(RequestFactory::class);
         $request = $requestFactory->create();
 
-        $router = resolve(Router::class);
-        $response = $router->handle($request);
+        $response = $this->handle($request);
 
         $this->sendResponse($response);
     }
@@ -61,5 +60,17 @@ class HttpKernel implements Kernel
         if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
+    }
+
+    /**
+     * Sends the given request through the HTTP pipeline and produces an HTTP response.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function handle(Request $request): Response
+    {
+        return $this->router->handle($request);
     }
 }

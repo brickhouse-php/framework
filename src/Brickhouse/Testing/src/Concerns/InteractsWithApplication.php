@@ -15,7 +15,7 @@ trait InteractsWithApplication
      */
     public function createApplication(): Application
     {
-        return Application::configure()->create();
+        return Application::create();
     }
 
     protected function setUpTestEnvironment(): void

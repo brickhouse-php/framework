@@ -9,6 +9,6 @@ describe('HTTP Client', function () {
             ->acceptsJson()
             ->get('https://httpbin.org/status/200');
 
-        expect($response->status())->toBe(HttpStatus::OK);
+        expect($response->status)->toBe(HttpStatus::OK);
     });
 })->group('http');

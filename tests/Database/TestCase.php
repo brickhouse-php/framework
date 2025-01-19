@@ -10,7 +10,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        Application::configure()->create();
+        Application::create();
     }
 
     /**

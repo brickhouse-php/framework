@@ -142,22 +142,6 @@ class Response extends HttpMessage
     }
 
     /**
-     * Creates a new streaming `Response` instance with the given content generator.
-     *
-     * @param \Closure():\Generator     $generator
-     *
-     * @return Response
-     */
-    public static function stream(\Closure $generator, string $contentType = ContentType::BIN): Response
-    {
-        $response = new StreamedResponse($generator);
-        $response->headers->set('Transfer-Encoding', 'chunked');
-        $response->setContentType($contentType);
-
-        return $response;
-    }
-
-    /**
      * Creates a new `Response`-object which contains the rendered view, `$alias`, depending on the request view format.
      *
      * @param string                    $alias      Defines the alias of the view to render.
