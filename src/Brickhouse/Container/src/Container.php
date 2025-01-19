@@ -11,7 +11,7 @@ class Container implements ContainerInterface
     /**
      * Gets the globally available instance of the container, if any.
      */
-    protected static Container $container;
+    protected static null|Container $container = null;
 
     /**
      * Defines all the containers bindings.
