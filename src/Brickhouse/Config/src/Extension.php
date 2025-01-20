@@ -3,8 +3,6 @@
 namespace Brickhouse\Config;
 
 use Brickhouse\Core\Application;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class Extension extends \Brickhouse\Core\Extension
 {
@@ -13,9 +11,7 @@ class Extension extends \Brickhouse\Core\Extension
      */
     public string $name = "brickhouse/config";
 
-    public function __construct(private readonly Application $application)
-    {
-    }
+    public function __construct(private readonly Application $application) {}
 
     /**
      * Invoked before the application has started.
@@ -87,18 +83,10 @@ class Extension extends \Brickhouse\Core\Extension
             return [];
         }
 
-        $finder = new Finder();
-        $finder
-            ->files()
-            ->in($this->application->configPath)
-            ->name("*.config.php");
-
-        $files = iterator_to_array($finder->getIterator());
-
         return array_values(
             array_map(
-                fn(SplFileInfo $file) => (string) $file->getRealPath(),
-                $files
+                fn(string $relativePath) => realpath($relativePath),
+                glob(config_path("*.config.php"))
             )
         );
     }
