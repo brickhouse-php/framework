@@ -35,6 +35,13 @@ class Container implements ContainerInterface
     protected array $instances = [];
 
     /**
+     * Defines all the containers singleton instances.
+     *
+     * @var array<class-string,\ReflectionClass<*>>
+     */
+    protected array $reflectors = [];
+
+    /**
      * Gets whether the container has any entries defined with the given type.
      *
      * @param string $abstract
@@ -127,8 +134,8 @@ class Container implements ContainerInterface
         // If the abstract is an alias, resolve it first.
         $abstract = $this->getAlias($abstract);
 
-        if (isset($this->bindings[$abstract])) {
-            return $this->bindings[$abstract]["concrete"];
+        if (($binding = @$this->bindings[$abstract]) !== null) {
+            return $binding["concrete"];
         }
 
         return null;
@@ -146,8 +153,8 @@ class Container implements ContainerInterface
         // If the abstract is an alias, resolve it first.
         $abstract = $this->getAlias($abstract);
 
-        if (isset($this->bindings[$abstract])) {
-            return $this->bindings[$abstract]["shared"];
+        if (($binding = @$this->bindings[$abstract]) !== null) {
+            return $binding["shared"];
         }
 
         return false;
@@ -329,7 +336,11 @@ class Container implements ContainerInterface
         $buildStack[] = $concrete;
 
         try {
-            $reflector = new \ReflectionClass($concrete);
+            if (is_string($concrete)) {
+                $reflector = ($this->reflectors[$concrete] ??= new \ReflectionClass($concrete));
+            } else {
+                $reflector = new \ReflectionClass($concrete);
+            }
         } catch (\ReflectionException $e) {
             throw new ResolutionFailedException("Target class [$concrete] does not exist.", $buildStack, $e);
         }
