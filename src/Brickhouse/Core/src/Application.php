@@ -251,6 +251,13 @@ class Application extends Container
      */
     public function handleRequest(): int
     {
-        return $this->kernel(HttpKernel::class);
+        // Invoking `Application::kernel` will both register and execute the kernel.
+        // Within the HttpKernel, the HTTP request is read and handled, as well as sent back to the client.
+        $result = $this->kernel(HttpKernel::class);
+
+        // Call the garbage collector to reduce the chances of it being triggered in the middle of a page generation.
+        \gc_collect_cycles();
+
+        return $result;
     }
 }
