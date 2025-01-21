@@ -247,17 +247,69 @@ class Application extends Container
     /**
      * Reads the current request from superglobals, routes it's to the correct action, and sends the response back to the client.
      *
-     * @return int
+     * @return bool
      */
-    public function handleRequest(): int
+    public function handleRequest(): bool
     {
         // Invoking `Application::kernel` will both register and execute the kernel.
         // Within the HttpKernel, the HTTP request is read and handled, as well as sent back to the client.
-        $result = $this->kernel(HttpKernel::class);
+        $this->kernel(HttpKernel::class);
 
         // Call the garbage collector to reduce the chances of it being triggered in the middle of a page generation.
         \gc_collect_cycles();
 
-        return $result;
+        return true;
+    }
+
+    /**
+     * Determines whether the application is currently being executed as a worker.
+     *
+     * @return boolean
+     */
+    public function runningAsWorker(): bool
+    {
+        // FrankenPHP
+        if (isset($_SERVER['FRANKENPHP_WORKER']) && function_exists('frankenphp_handle_request')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Enqueues the given callback as a handler for the current application worker.
+     *
+     * @param callable():void   $callback       Callback for the current worker.
+     *
+     * @return void
+     */
+    public function enqueueWorker(callable $callback, int $maxRequests = 0): void
+    {
+        $requestHandler = $this->workerRequestHandler();
+
+        for ($nRequests = 0; !$maxRequests || $nRequests < $maxRequests; $nRequests++) {
+            $keepRunning = $requestHandler($callback);
+
+            if (!$keepRunning) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Gets the request handler for the current worker runtime.
+     *
+     * @return \Closure(callable():void $handler): bool
+     */
+    protected function workerRequestHandler(): \Closure
+    {
+        // FrankenPHP
+        if (function_exists('frankenphp_handle_request')) {
+            return fn(\Closure $callback) => \frankenphp_handle_request($callback);
+        }
+
+        throw new \RuntimeException(
+            "Could not determine worker runtime. Are you sure the application is running in a worker?"
+        );
     }
 }
