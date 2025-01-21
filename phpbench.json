@@ -1,0 +1,21 @@
+{
+  "$schema": "./vendor/phpbench/phpbench/phpbench.schema.json",
+  "runner.bootstrap": "vendor/autoload.php",
+  "report.generators": {
+    "hashing": {
+      "title": "Hashing algorithm comparison",
+      "description": "Compares algorithms for different string sizes",
+      "generator": "component",
+      "filter": "benchmark_name = 'HashingAlgorithmBench'",
+      "components": [
+        {
+          "component": "bar_chart_aggregate",
+          "x_partition": "'Size: ' ~ variant_params['size']",
+          "bar_partition": "variant_params['algo']",
+          "y_expr": "mode(partition['result_time_avg']) as time",
+          "y_axes_label": "yValue as time"
+        }
+      ]
+    }
+  }
+}

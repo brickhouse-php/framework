@@ -21,7 +21,9 @@
         "source": "https://github.com/brickhouse-php/brickhouse"
     },
     "scripts": {
-        "test": "pest"
+        "test": "pest",
+        "bench": "phpbench run benchmarks",
+        "bench:hash": "phpbench run benchmarks/Proofs/HashingAlgorithmBench.php --report=hashing"
     },
     "require": {
         "php": "^8.4",
@@ -54,6 +56,7 @@
         "toolkit/pflag": "^2.0"
     },
     "require-dev": {
+        "phpbench/phpbench": "^1.3",
         "phpstan/phpstan": "^2.0",
         "symplify/monorepo-builder": "^11.2"
     },
@@ -130,6 +133,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Brickhouse\\Benchmarks\\": "benchmarks/",
             "Brickhouse\\Tests\\": "tests/"
         }
     },
@@ -151,5 +155,11 @@
                 "\\Brickhouse\\View\\Extension"
             ]
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "src/Brickhouse/Http"
+        }
+    ]
 }
