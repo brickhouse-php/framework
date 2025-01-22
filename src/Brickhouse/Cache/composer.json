@@ -43,6 +43,9 @@
             "pestphp/pest-plugin": true
         }
     },
+    "suggest": {
+        "ext-apcu": "Required to use the APCu caching provider"
+    },
     "extra": {
         "brickhouse": {
             "extensions": [
