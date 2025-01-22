@@ -6,14 +6,22 @@ use Brickhouse\Cache\Cache;
 use Brickhouse\Config\Environment;
 use Brickhouse\View\Engine\Compiler;
 use Brickhouse\View\Engine\Exceptions\ViewNotFoundException;
+use Brickhouse\View\Helpers;
 
 class Renderer extends \Brickhouse\View\Engine\Renderer
 {
     public function __construct()
     {
+        $compiler = new Compiler();
+
+        $compiler->addHelpers([
+            Helpers\CssInclude::class,
+            Helpers\JsInclude::class,
+        ]);
+
         parent::__construct(
             new ViewResolver(),
-            new Compiler(),
+            $compiler,
         );
     }
 
