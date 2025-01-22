@@ -33,6 +33,16 @@ final class Environment
     }
 
     /**
+     * Gets whether the current environment is 'production'.
+     *
+     * @return boolean
+     */
+    public static function isProduction(): bool
+    {
+        return strtolower(static::$current) === 'production';
+    }
+
+    /**
      * Gets the currently loaded environment file, if any.
      *
      * @return null|string
