@@ -61,6 +61,7 @@
         "symplify/monorepo-builder": "^11.2"
     },
     "replace": {
+        "brickhouse/cache": "self.version",
         "brickhouse/channel": "self.version",
         "brickhouse/config": "self.version",
         "brickhouse/console": "self.version",
@@ -84,6 +85,7 @@
     "autoload": {
         "psr-4": {
             "Brickhouse\\": "src/Brickhouse/",
+            "Brickhouse\\Cache\\": "src/Brickhouse/Cache/src",
             "Brickhouse\\Channel\\": "src/Brickhouse/Channel/src",
             "Brickhouse\\Config\\": "src/Brickhouse/Config/src",
             "Brickhouse\\Console\\": "src/Brickhouse/Console/src",
@@ -102,6 +104,7 @@
             "Tests\\": "src/Brickhouse/Support/test"
         },
         "classmap": [
+            "src/Brickhouse/Cache/src/",
             "src/Brickhouse/Channel/src/",
             "src/Brickhouse/Config/src/",
             "src/Brickhouse/Console/src/",
@@ -146,6 +149,7 @@
     "extra": {
         "brickhouse": {
             "extensions": [
+                "\\Brickhouse\\Cache\\Extension",
                 "\\Brickhouse\\Channel\\Extension",
                 "\\Brickhouse\\Channel\\Websocket\\Extension",
                 "\\Brickhouse\\Config\\Extension",
@@ -155,11 +159,5 @@
                 "\\Brickhouse\\View\\Extension"
             ]
         }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "src/Brickhouse/Http"
-        }
-    ]
+    }
 }
