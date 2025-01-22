@@ -42,5 +42,12 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
+    },
+    "extra": {
+        "brickhouse": {
+            "extensions": [
+                "\\Brickhouse\\Cache\\Extension"
+            ]
+        }
     }
 }
