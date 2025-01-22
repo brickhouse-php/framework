@@ -33,6 +33,35 @@ class StringHelper implements \Stringable
     }
 
     /**
+     * Appends the given value after the string.
+     *
+     * @param string $subject       String to place after the current string.
+     *
+     * @return static
+     */
+    public function append(string $subject): static
+    {
+        return new static($this->value . $subject);
+    }
+
+    /**
+     * Appends the given value after the string, if the given condition is met.
+     *
+     * @param callable(string $value):bool  $condition  Condition to meet before appending `$subject` after the current string.
+     * @param string                        $subject    String to place after the current string, if `$condition` returns `true`.
+     *
+     * @return static
+     */
+    public function appendIf(callable $condition, string $subject): static
+    {
+        if ($condition($this->value)) {
+            return new static($this->value . $subject);
+        }
+
+        return new static($this->value);
+    }
+
+    /**
      * Capitalizes the first letter of the string.
      *
      * @return static
@@ -107,6 +136,35 @@ class StringHelper implements \Stringable
     public function lower(): static
     {
         return new static(strtolower($this->value));
+    }
+
+    /**
+     * Prepends the given value in front of the string.
+     *
+     * @param string $subject       String to place in front of the current string.
+     *
+     * @return static
+     */
+    public function prepend(string $subject): static
+    {
+        return new static($subject . $this->value);
+    }
+
+    /**
+     * Prepends the given value in front of the string, if the given condition is met.
+     *
+     * @param callable(string $value):bool  $condition  Condition to meet before prepending `$subject` in front of the current string.
+     * @param string                        $subject    String to place in front of the current string, if `$condition` returns `true`.
+     *
+     * @return static
+     */
+    public function prependIf(callable $condition, string $subject): static
+    {
+        if ($condition($this->value)) {
+            return new static($subject . $this->value);
+        }
+
+        return new static($this->value);
     }
 
     /**
