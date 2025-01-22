@@ -6,6 +6,13 @@ use \Brickhouse\View\Engine\ViewResolver as BaseViewResolver;
 
 class ViewResolver extends BaseViewResolver
 {
+    /**
+     * Gets the extension for supported views.
+     *
+     * @var string
+     */
+    public const string EXTENSION = ".html.php";
+
     public function __construct()
     {
         parent::__construct(base_path());
@@ -24,7 +31,7 @@ class ViewResolver extends BaseViewResolver
         $path = str_replace(['/', '\\'], ['/', '/'], $path);
 
         if (pathinfo($path, PATHINFO_EXTENSION) === '') {
-            $path .= BaseViewResolver::EXTENSION;
+            $path .= self::EXTENSION;
         }
 
         return view_path($path);
@@ -46,7 +53,7 @@ class ViewResolver extends BaseViewResolver
         $path = str_replace(['/', '\\'], ['/', '/'], $path);
 
         if (pathinfo($path, PATHINFO_EXTENSION) === '') {
-            $path .= BaseViewResolver::EXTENSION;
+            $path .= self::EXTENSION;
         }
 
         return layout_path($path);
@@ -62,13 +69,13 @@ class ViewResolver extends BaseViewResolver
     public function resolveComponent(string $alias): string
     {
         // Strip fragment alias prefix
-        $alias = substr($alias, strlen(BaseViewResolver::ALIAS_PREFIX));
+        $alias = substr($alias, strlen(self::ALIAS_PREFIX));
 
         $path = ltrim($alias, '/\\');
         $path = str_replace(['/', '\\'], ['/', '/'], $path);
 
         if (pathinfo($path, PATHINFO_EXTENSION) === '') {
-            $path .= BaseViewResolver::EXTENSION;
+            $path .= self::EXTENSION;
         }
 
         return component_path($path);
