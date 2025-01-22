@@ -33,6 +33,8 @@ class Extension extends \Brickhouse\Core\Extension
             Commands\ComponentGenerator::class,
             Commands\LayoutGenerator::class,
             Commands\ViewGenerator::class,
+            Commands\ViewsClear::class,
+            Commands\ViewsCompile::class,
         ]);
     }
 }

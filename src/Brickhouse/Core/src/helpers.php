@@ -42,6 +42,20 @@ if (!function_exists("app_path")) {
     }
 }
 
+if (!function_exists("build_path")) {
+    /**
+     * Gets the applications build directory.
+     *
+     * @param string    $path   Optional path to append to the build path.
+     *
+     * @return string
+     */
+    function build_path(?string ...$path): string
+    {
+        return public_path('_build', ...$path);
+    }
+}
+
 if (!function_exists("config_path")) {
     /**
      * Gets the applications configuration directory.
