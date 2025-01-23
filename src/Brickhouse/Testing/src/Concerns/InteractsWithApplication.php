@@ -30,5 +30,8 @@ trait InteractsWithApplication
         if ($this->app !== null) {
             $this->app = null;
         }
+
+        restore_error_handler();
+        restore_exception_handler();
     }
 }
