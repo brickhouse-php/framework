@@ -8,11 +8,12 @@ if (!function_exists('\Brickhouse\Console\Prompts\text')) {
     /**
      * Prompts the user for text input in the console.
      *
-     * @param string        $label          Label to present for the prompt.
-     * @param string        $placeholder    Optional placeholder for the prompt. Defaults to ''.
-     * @param string        $initial        Optional initial value of the prompt. Defaults to ''.
-     * @param string        $hint           Optional hint to show to the user. Defaults to ''.
-     * @param bool|string   $required       Defines whether the field is required. If a string, defines the error message.
+     * @param string                                $label          Label to present for the prompt.
+     * @param string                                $placeholder    Optional placeholder for the prompt. Defaults to ''.
+     * @param string                                $initial        Optional initial value of the prompt. Defaults to ''.
+     * @param string                                $hint           Optional hint to show to the user. Defaults to ''.
+     * @param bool|string                           $required       Defines whether the field is required. If a string, defines the error message.
+     * @param null|\Closure(string $value):?string  $validate       Defines a custom validation step for the prompt.
      *
      * @return string
      */
@@ -22,6 +23,7 @@ if (!function_exists('\Brickhouse\Console\Prompts\text')) {
         string $initial = '',
         string $hint = '',
         bool|string $required = false,
+        null|\Closure $validate = null,
     ): string {
         return new Interactive\TextPrompt(...func_get_args())->prompt();
     }

@@ -25,6 +25,7 @@ class TextPrompt extends Prompt implements HasCursor, ValidatesInput
         public readonly string $initial = '',
         public readonly string $hint = '',
         public readonly bool|string $required = false,
+        public readonly null|\Closure $validate = null,
     ) {
         parent::__construct();
 
@@ -47,15 +48,15 @@ class TextPrompt extends Prompt implements HasCursor, ValidatesInput
 
     public function validate(): null|string
     {
-        if (!$this->required || !empty($this->value)) {
-            return null;
+        if ($this->required && empty($this->value)) {
+            return is_string($this->required) ? $this->required : 'Please enter a value.';
         }
 
-        if (is_string($this->required)) {
-            return $this->required;
+        if ($this->validate !== null && ($message = ($this->validate)($this->value)) !== null) {
+            return $message;
         }
 
-        return "Please enter a value.";
+        return null;
     }
 
     protected function render(): string
