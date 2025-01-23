@@ -134,7 +134,7 @@ class Container implements ContainerInterface
         // If the abstract is an alias, resolve it first.
         $abstract = $this->getAlias($abstract);
 
-        if (($binding = @$this->bindings[$abstract]) !== null) {
+        if (($binding = $this->bindings[$abstract] ?? null) !== null) {
             return $binding["concrete"];
         }
 
@@ -153,7 +153,7 @@ class Container implements ContainerInterface
         // If the abstract is an alias, resolve it first.
         $abstract = $this->getAlias($abstract);
 
-        if (($binding = @$this->bindings[$abstract]) !== null) {
+        if (($binding = $this->bindings[$abstract] ?? null) !== null) {
             return $binding["shared"];
         }
 
