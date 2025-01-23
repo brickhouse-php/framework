@@ -155,7 +155,7 @@ abstract class Prompt
     {
         $initial = $this->initialCursor->position;
 
-        $linesInTemplate = count(explode(PHP_EOL, $this->prevFrame));
+        $linesInTemplate = count(explode(PHP_EOL, $this->prevFrame ?? ''));
 
         // When a template is more than 1 line and the begins rendering on the last line,
         // the initial cursor will be offset by at least one line. This makes the prompt partially render
