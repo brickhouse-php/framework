@@ -13,7 +13,7 @@ final class Environment
      */
     public static function current(): string
     {
-        static::$current ??= env('APP_ENV', 'production');
+        static::$current ??= env('APP_ENV', 'development');
 
         return static::$current;
     }
