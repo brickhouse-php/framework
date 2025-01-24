@@ -184,7 +184,7 @@ abstract class GeneratorCommand extends Command
         $directory = dirname($path);
 
         if (!is_dir($directory)) {
-            mkdir($directory);
+            mkdir($directory, recursive: true);
         }
     }
 }
