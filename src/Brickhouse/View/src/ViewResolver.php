@@ -30,7 +30,8 @@ class ViewResolver extends BaseViewResolver
         $path = ltrim($alias, '/\\');
         $path = str_replace(['/', '\\'], ['/', '/'], $path);
 
-        if (pathinfo($path, PATHINFO_EXTENSION) === '') {
+        if (!str_ends_with($alias, '.php')) {
+            $path = str_replace('.', '/', $path);
             $path .= self::EXTENSION;
         }
 
@@ -52,7 +53,8 @@ class ViewResolver extends BaseViewResolver
         $path = ltrim($alias, '/\\');
         $path = str_replace(['/', '\\'], ['/', '/'], $path);
 
-        if (pathinfo($path, PATHINFO_EXTENSION) === '') {
+        if (!str_ends_with($alias, '.php')) {
+            $path = str_replace('.', '/', $path);
             $path .= self::EXTENSION;
         }
 
@@ -74,7 +76,8 @@ class ViewResolver extends BaseViewResolver
         $path = ltrim($alias, '/\\');
         $path = str_replace(['/', '\\'], ['/', '/'], $path);
 
-        if (pathinfo($path, PATHINFO_EXTENSION) === '') {
+        if (!str_ends_with($alias, '.php')) {
+            $path = str_replace('.', '/', $path);
             $path .= self::EXTENSION;
         }
 
