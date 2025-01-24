@@ -58,7 +58,7 @@ class Serve extends Command
 
         $debugMode = '';
         if (env('APP_DEBUG')) {
-            $debugMode = ' (with <options=bold>debug mode enabled</>)';
+            $debugMode = ' (with <span class="font-bold">debug mode enabled</span>)';
         }
 
         $this->info("Server running on <span class='font-bold'>[http://{$this->hostname}:{$this->port}]</span>.");
