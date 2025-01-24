@@ -16,9 +16,4 @@ final class AppConfig extends Config
         public readonly bool $debug = false,
         public readonly bool $api_only = false,
     ) {}
-
-    public static function default(): null|static
-    {
-        return new static(debug: false);
-    }
 }
