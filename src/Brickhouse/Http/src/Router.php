@@ -158,7 +158,7 @@ class Router
         /** @var Route $route */
         [$route, $parameters] = $match;
 
-        $request->format = $request->headers->contentType() ?? ContentType::HTML;
+        $request->format = $request->headers->accept()?->first()->format ?? ContentType::HTML;
         $request->parameters = [...$request->parameters, ...$parameters, ...$request->bindings()];
 
         $binding = $this->resolveController($route, $request);
