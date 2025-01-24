@@ -5,6 +5,7 @@ namespace Brickhouse\View\Commands;
 use Brickhouse\Console\Attributes\Option;
 use Brickhouse\Console\GeneratorCommand;
 use Brickhouse\Console\InputOption;
+use Brickhouse\Core\AppConfig;
 use Brickhouse\Support\StringHelper;
 
 class ViewGenerator extends GeneratorCommand
@@ -40,7 +41,7 @@ class ViewGenerator extends GeneratorCommand
 
     public function stub(): string
     {
-        if ($this->json) {
+        if ($this->json || resolve(AppConfig::class)->api_only) {
             return __DIR__ . '/../Stubs/View.stub.json.php';
         }
 
