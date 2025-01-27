@@ -4,7 +4,9 @@ use Brickhouse\Cache\ApcuCache;
 use Carbon\Carbon;
 
 beforeEach(function () {})
-    ->skip(fn() => !function_exists("apcu_enabled") || !\apcu_enabled(), "APCu extension not available.");
+    ->skip(function () {
+        return !function_exists("apcu_enabled") || !\apcu_enabled();
+    }, "APCu extension not available.");
 
 describe('ApcuCache', function () {
     test('`get` returns null given non-existent key', function () {

@@ -11,6 +11,10 @@ parameters:
     ignoreErrors:
         - identifier: return.unusedType
 
+        - message: '#Call to an undefined method Pest\\PendingCalls\\DescribeCall::[\w]+\(\)#'
+          paths:
+            - src/Brickhouse/*/tests/*
+
     excludePaths:
         analyseAndScan:
             - */Stubs/*.stub.php
