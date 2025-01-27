@@ -37,7 +37,8 @@ beforeEach(function () {
 afterEach(function () {
     $schema = new Schema();
 
-    $schema->dropAllTables();
+    $schema->drop('authors');
+    $schema->drop('posts');
 });
 
 describe('Model creation', function () {
@@ -87,7 +88,6 @@ describe('Model creation', function () {
             ]
         ]);
 
-        var_dump(Author::all()->toArray());
         expect(Author::all()->toArray())->toHaveCount(1);
         expect(Post::all()->toArray())->toHaveCount(3);
     });
