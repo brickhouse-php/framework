@@ -4,6 +4,7 @@ namespace Brickhouse\Testing\Concerns;
 
 use Brickhouse\Http\HttpKernel;
 use Brickhouse\Http\Request;
+use Brickhouse\Http\Transport\Uri;
 use Brickhouse\Testing\TestResponse;
 
 trait InteractsWithHttpRequests
@@ -39,7 +40,7 @@ trait InteractsWithHttpRequests
 
         $request = new Request(
             $method,
-            \League\Uri\Uri::fromComponents(['path' => $path])
+            new Uri()->withPath($path)
         );
 
         $response = $kernel->handle($request);
