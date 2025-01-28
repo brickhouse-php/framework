@@ -16,7 +16,7 @@ class Container implements ContainerInterface
     /**
      * Defines all the containers bindings.
      *
-     * @var array<string,array{concrete:string,shared:bool}>
+     * @var array<string,list<array{concrete:string,shared:bool}>>
      */
     protected array $bindings = [];
 
@@ -28,7 +28,7 @@ class Container implements ContainerInterface
     protected array $aliases = [];
 
     /**
-     * Defines all the containers singleton instances.
+     * Defines all the container's singleton instances.
      *
      * @var array<string,mixed>
      */
@@ -57,7 +57,11 @@ class Container implements ContainerInterface
      */
     public function has(string $abstract): bool
     {
-        return isset($this->bindings[$abstract]) || $this->isAlias($abstract);
+        if (isset($this->bindings[$abstract]) && !empty($this->bindings[$abstract])) {
+            return true;
+        }
+
+        return $this->isAlias($abstract);
     }
 
     /**
@@ -85,6 +89,32 @@ class Container implements ContainerInterface
     }
 
     /**
+     * Gets the instance from the container with the given abstract name.
+     *
+     * This method exists to be compatible with PSR-11.
+     *
+     * @param string $abstract
+     *
+     * @return mixed
+     *
+     * @throws ContainerEntryMissingException       Thrown if the entry isn't found in the container.
+     */
+    public function getAll(string $abstract): mixed
+    {
+        $bindings = $this->getBindings($abstract);
+        if (empty($bindings)) {
+            throw new ContainerEntryMissingException($abstract);
+        }
+
+        return array_map(
+            fn(mixed $binding) => is_callable($binding)
+                ? $this->call(null, $binding)
+                : $this->resolve($binding),
+            $bindings
+        );
+    }
+
+    /**
      * Aliases the given abstract type to the given concrete type.
      *
      * @param string $abstract
@@ -95,7 +125,7 @@ class Container implements ContainerInterface
     public function alias(string $abstract, string $concrete): void
     {
         if ($abstract === $concrete) {
-            throw new \Exception("Cannot alias abstract to same type: {$abstract}");
+            throw new \InvalidArgumentException("Cannot alias abstract to same type: {$abstract}");
         }
 
         $this->aliases[$abstract] = $concrete;
@@ -141,11 +171,32 @@ class Container implements ContainerInterface
         // If the abstract is an alias, resolve it first.
         $abstract = $this->getAlias($abstract);
 
-        if (($binding = $this->bindings[$abstract] ?? null) !== null) {
-            return $binding["concrete"];
+        $binding = $this->bindings[$abstract] ?? null;
+        if ($binding === null || empty($binding)) {
+            return null;
         }
 
-        return null;
+        return array_slice($binding, -1)[0]["concrete"];
+    }
+
+    /**
+     * Gets all the bound concrete types, which is bound to the given type.
+     *
+     * @param string $abstract
+     *
+     * @return list<mixed>
+     */
+    public function getBindings(string $abstract): array
+    {
+        // If the abstract is an alias, resolve it first.
+        $abstract = $this->getAlias($abstract);
+
+        $binding = $this->bindings[$abstract] ?? null;
+        if ($binding === null || empty($binding)) {
+            return [];
+        }
+
+        return array_column($binding, 'concrete');
     }
 
     /**
@@ -160,11 +211,12 @@ class Container implements ContainerInterface
         // If the abstract is an alias, resolve it first.
         $abstract = $this->getAlias($abstract);
 
-        if (($binding = $this->bindings[$abstract] ?? null) !== null) {
-            return $binding["shared"];
+        $binding = $this->bindings[$abstract] ?? null;
+        if ($binding === null || empty($binding)) {
+            return false;
         }
 
-        return false;
+        return array_slice($binding, -1)[0]["shared"];
     }
 
     /**
@@ -180,7 +232,7 @@ class Container implements ContainerInterface
     {
         $concrete ??= $abstract;
 
-        $this->bindings[$abstract] = [
+        $this->bindings[$abstract][] = [
             "concrete" => $concrete,
             "shared" => $shared,
         ];
@@ -341,7 +393,7 @@ class Container implements ContainerInterface
     {
         $buildStack[] = $callable;
 
-            $reflector = new \ReflectionFunction($callable);
+        $reflector = new \ReflectionFunction($callable);
 
         $dependencies = $reflector->getParameters();
         $instances = $this->resolveDependencies($dependencies, $parameters, $buildStack);
@@ -373,7 +425,7 @@ class Container implements ContainerInterface
         $buildStack[] = $concrete;
 
         try {
-                $reflector = ($this->reflectors[$concrete] ??= new \ReflectionClass($concrete));
+            $reflector = ($this->reflectors[$concrete] ??= new \ReflectionClass($concrete));
         } catch (\ReflectionException $e) {
             throw new ResolutionFailedException("Target class [$concrete] does not exist.", $buildStack, $e);
         }
@@ -394,7 +446,7 @@ class Container implements ContainerInterface
         $instances = $this->resolveDependencies($dependencies, $parameters, $buildStack);
 
         return $reflector->newInstanceArgs($instances);
-        }
+    }
 
     /**
      * Terminates the container scope and clears all scoped instances.
