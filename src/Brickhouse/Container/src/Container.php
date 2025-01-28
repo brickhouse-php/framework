@@ -268,7 +268,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function instance(string $abstract, $instance): void
+    public function instance(string $abstract, mixed $instance): void
     {
         $this->singleton($abstract, fn() => $instance);
     }
@@ -281,7 +281,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function instanceIf(string $abstract, $instance): void
+    public function instanceIf(string $abstract, mixed $instance): void
     {
         if (!$this->has($abstract)) {
             $this->instance($abstract, $instance);
@@ -427,6 +427,14 @@ class Container implements ContainerInterface
             $name = $dependency->getName();
             $type = (string) $dependency->getType();
 
+            // `getType` returns a type name which is different from `gettype`,
+            // but only for certain scalars.
+            $type = match ($type) {
+                'int' => 'integer',
+                'bool' => 'boolean',
+                default => $type,
+            };
+
             // If a parameter of the same name is provided, use that instead.
             if (isset($parameters[$name])) {
                 $results[] = $parameters[$name];
@@ -437,7 +445,13 @@ class Container implements ContainerInterface
             // we can attempt to use that.
             $matchingParameter = array_find(
                 $parameters,
-                fn($value) => (is_object($value) ? $value::class : gettype($value)) === $type
+                function (mixed $value) use ($type): bool {
+                    if (is_object($value)) {
+                        return $value::class === $type;
+                    }
+
+                    return gettype($value) === $type;
+                }
             );
 
             if ($matchingParameter !== null) {
@@ -445,9 +459,15 @@ class Container implements ContainerInterface
                 continue;
             }
 
-            $results[] = $isPrimitive
+            $result = $isPrimitive
                 ? $this->resolvePrimitive($dependency, $buildStack)
                 : $this->resolveClass($dependency, $buildStack);
+
+            if (is_array($result) && $type !== 'array') {
+                array_push($results, ...$result);
+            } else {
+                $results[] = $result;
+            }
         }
 
         return $results;
@@ -494,6 +514,7 @@ class Container implements ContainerInterface
     {
         try {
             return $this->resolve($this->getParameterClass($parameter), [], $buildStack);
+            // @codeCoverageIgnoreStart
         } catch (ResolutionFailedException $e) {
             if ($parameter->isDefaultValueAvailable()) {
                 return $parameter->getDefaultValue();
@@ -501,6 +522,7 @@ class Container implements ContainerInterface
 
             throw $e;
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -513,13 +535,10 @@ class Container implements ContainerInterface
     private function getParameterClass(\ReflectionParameter $parameter): ?string
     {
         $type = $parameter->getType();
-
         if (!$type instanceof \ReflectionNamedType || $type->isBuiltin()) {
             return null;
         }
 
-        $name = $type->getName();
-
-        return $name;
+        return $type->getName();
     }
 }
