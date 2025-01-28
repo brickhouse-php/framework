@@ -93,11 +93,48 @@ describe("Container::build", function () {
     it('throws ResolutionFailedException given class with primitive parameter', function () {
         new Container()->build(ClassWithScalarInject::class);
     })->throws(ResolutionFailedException::class);
+
+    it('builds class with variadic class parameters', function () {
+        $container = new Container;
+
+        $container->bind(CommonInterface::class, SimpleClass1::class);
+        $container->bind(CommonInterface::class, SimpleClass2::class);
+        $container->bind(CommonInterface::class, SimpleClass3::class);
+
+        $value = $container->build(ClassWithVariadicClassParameters::class);
+
+        expect($value)->toBeInstanceOf(ClassWithVariadicClassParameters::class);
+        expect($value->classes)->sequence(
+            fn($class) => $class->toBeInstanceOf(SimpleClass1::class),
+            fn($class) => $class->toBeInstanceOf(SimpleClass2::class),
+            fn($class) => $class->toBeInstanceOf(SimpleClass3::class),
+        );
+    });
 });
+
+interface CommonInterface
+{
+    public function __construct();
+}
 
 abstract class AbstractClass
 {
     public abstract function __construct();
+}
+
+class SimpleClass1 implements CommonInterface
+{
+    public function __construct() {}
+}
+
+class SimpleClass2 implements CommonInterface
+{
+    public function __construct() {}
+}
+
+class SimpleClass3 implements CommonInterface
+{
+    public function __construct() {}
 }
 
 class ClassWithScalarInject
@@ -136,4 +173,15 @@ class ClassWithVariadicValue
 class ClassWithNullableParameter
 {
     public function __construct(public readonly null|string $nullable) {}
+}
+
+class ClassWithVariadicClassParameters
+{
+    public readonly array $classes;
+
+    public function __construct(
+        CommonInterface ...$classes
+    ) {
+        $this->classes = $classes;
+    }
 }

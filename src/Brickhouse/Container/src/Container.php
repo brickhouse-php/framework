@@ -564,8 +564,14 @@ class Container implements ContainerInterface
      */
     private function resolveClass(\ReflectionParameter $parameter, array $buildStack = []): mixed
     {
+        $type = $this->getParameterClass($parameter);
+
+        if ($parameter->isVariadic()) {
+            return $this->getAll($type);
+        }
+
         try {
-            return $this->resolve($this->getParameterClass($parameter), [], $buildStack);
+            return $this->resolve($type, [], $buildStack);
             // @codeCoverageIgnoreStart
         } catch (ResolutionFailedException $e) {
             if ($parameter->isDefaultValueAvailable()) {
