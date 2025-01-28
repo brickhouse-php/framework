@@ -35,7 +35,14 @@ class Container implements ContainerInterface
     protected array $instances = [];
 
     /**
-     * Defines all the containers singleton instances.
+     * Defines all the keys of the container's scoped instances.
+     *
+     * @var list<string>
+     */
+    protected array $scopedInstances = [];
+
+    /**
+     * Defines all the containers reflectors.
      *
      * @var array<class-string,\ReflectionClass<*>>
      */
@@ -192,6 +199,36 @@ class Container implements ContainerInterface
     {
         if (!$this->has($abstract)) {
             $this->bind($abstract, $concrete, $shared);
+        }
+    }
+
+    /**
+     * Binds a value to the given type in the container as a scoped type.
+     *
+     * @param string                $abstract
+     * @param \Closure|string|null  $concrete
+     *
+     * @return void
+     */
+    public function scoped(string $abstract, \Closure|string|null $concrete = null): void
+    {
+        $this->scopedInstances[] = $abstract;
+
+        $this->singleton($abstract, $concrete);
+    }
+
+    /**
+     * Binds a value to the given type in the container as a scoped type, if the type has not already been bound.
+     *
+     * @param string                $abstract
+     * @param \Closure|string|null  $concrete
+     *
+     * @return void
+     */
+    public function scopedIf(string $abstract, \Closure|string|null $concrete = null): void
+    {
+        if (!$this->has($abstract)) {
+            $this->scoped($abstract, $concrete);
         }
     }
 
@@ -366,7 +403,16 @@ class Container implements ContainerInterface
             $instance = $reflector->newInstanceArgs($instances);
         }
 
-        return $instance;
+    /**
+     * Terminates the container scope and clears all scoped instances.
+     *
+     * @return void
+     */
+    public function terminateScope(): void
+    {
+        foreach ($this->scopedInstances as $scoped) {
+            unset($this->instances[$scoped]);
+        }
     }
 
     /**
