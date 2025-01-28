@@ -299,7 +299,7 @@ class Container implements ContainerInterface
      *
      * @return ($abstract is class-string<T> ? T : mixed)
      */
-    public function resolve(string $abstract, array $parameters = [], array $buildStack = [])
+    public function resolve(string $abstract, array $parameters = [], array $buildStack = []): mixed
     {
         $concrete = $this->getBinding($abstract);
         $needsContextualBuild = !empty($parameters);
@@ -337,15 +337,11 @@ class Container implements ContainerInterface
      *
      * @return TReturn
      */
-    public function call($newThis, callable $callable, array $parameters = [], array $buildStack = [])
+    public function call($newThis, callable $callable, array $parameters = [], array $buildStack = []): mixed
     {
         $buildStack[] = $callable;
 
-        try {
             $reflector = new \ReflectionFunction($callable);
-        } catch (\ReflectionException $e) {
-            throw new ResolutionFailedException("Target closure does not exist.", $buildStack, $e);
-        }
 
         $dependencies = $reflector->getParameters();
         $instances = $this->resolveDependencies($dependencies, $parameters, $buildStack);
@@ -368,21 +364,21 @@ class Container implements ContainerInterface
      *
      * @return mixed
      */
-    public function build(\Closure|string $concrete, array $parameters = [], array $buildStack = [])
+    public function build(\Closure|string $concrete, array $parameters = [], array $buildStack = []): mixed
     {
+        if ($concrete instanceof \Closure) {
+            return $this->call(null, $concrete, $parameters, $buildStack);
+        }
+
         $buildStack[] = $concrete;
 
         try {
-            if (is_string($concrete)) {
                 $reflector = ($this->reflectors[$concrete] ??= new \ReflectionClass($concrete));
-            } else {
-                $reflector = new \ReflectionClass($concrete);
-            }
         } catch (\ReflectionException $e) {
             throw new ResolutionFailedException("Target class [$concrete] does not exist.", $buildStack, $e);
         }
 
-        if (!$concrete instanceof \Closure && !$reflector->isInstantiable()) {
+        if (!$reflector->isInstantiable()) {
             throw new ResolutionFailedException("Target type [$concrete] cannot be instantiated.", $buildStack);
         }
 
@@ -397,10 +393,7 @@ class Container implements ContainerInterface
         $dependencies = $constructor->getParameters();
         $instances = $this->resolveDependencies($dependencies, $parameters, $buildStack);
 
-        if ($concrete instanceof \Closure) {
-            $instance = $concrete(...$instances);
-        } else {
-            $instance = $reflector->newInstanceArgs($instances);
+        return $reflector->newInstanceArgs($instances);
         }
 
     /**
