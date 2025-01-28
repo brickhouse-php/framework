@@ -31,9 +31,6 @@
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
-        "amphp/parser": "^1.1",
-        "amphp/pipeline": "^1.2",
-        "amphp/socket": "^2.3",
         "bramus/ansi-php": "^3.1",
         "brickhouse/http-transport": "dev-main",
         "brickhouse/routing": "dev-main",
@@ -62,7 +59,6 @@
     },
     "replace": {
         "brickhouse/cache": "self.version",
-        "brickhouse/channel": "self.version",
         "brickhouse/config": "self.version",
         "brickhouse/console": "self.version",
         "brickhouse/container": "self.version",
@@ -87,7 +83,6 @@
         "psr-4": {
             "Brickhouse\\": "src/Brickhouse/",
             "Brickhouse\\Cache\\": "src/Brickhouse/Cache/src",
-            "Brickhouse\\Channel\\": "src/Brickhouse/Channel/src",
             "Brickhouse\\Config\\": "src/Brickhouse/Config/src",
             "Brickhouse\\Console\\": "src/Brickhouse/Console/src",
             "Brickhouse\\Container\\": "src/Brickhouse/Container/src",
@@ -107,7 +102,6 @@
         },
         "classmap": [
             "src/Brickhouse/Cache/src/",
-            "src/Brickhouse/Channel/src/",
             "src/Brickhouse/Config/src/",
             "src/Brickhouse/Console/src/",
             "src/Brickhouse/Container/src/",
@@ -153,8 +147,6 @@
         "brickhouse": {
             "extensions": [
                 "\\Brickhouse\\Cache\\Extension",
-                "\\Brickhouse\\Channel\\Extension",
-                "\\Brickhouse\\Channel\\Websocket\\Extension",
                 "\\Brickhouse\\Config\\Extension",
                 "\\Brickhouse\\Database\\Extension",
                 "\\Brickhouse\\Http\\Extension",
