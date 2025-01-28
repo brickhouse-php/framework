@@ -14,6 +14,8 @@ class ResolutionFailedException extends \Exception implements ContainerException
         public readonly array $buildStack,
         public readonly null|\Throwable $previous = null
     ) {
-        parent::__construct($message, 0, $previous);
+        $formattedStack = join(" => ", $buildStack);
+
+        parent::__construct($message . ' [' . $formattedStack . ']', 0, $previous);
     }
 }
