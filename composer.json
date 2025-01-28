@@ -41,6 +41,7 @@
         "league/flysystem-memory": "^3.0",
         "league/flysystem-path-prefixing": "^3.3",
         "league/flysystem-read-only": "^3.3",
+        "league/uri": "^7.5",
         "monolog/monolog": "^3.8",
         "nesbot/carbon": "^3.8.2",
         "nunomaduro/collision": "^8.5",

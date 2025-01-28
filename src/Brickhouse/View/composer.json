@@ -23,7 +23,8 @@
         "brickhouse/cache": "dev-main",
         "brickhouse/core": "dev-main",
         "brickhouse/support": "dev-main",
-        "brickhouse/view-engine": "dev-main"
+        "brickhouse/view-engine": "dev-main",
+        "league/uri": "^7.5"
     },
     "autoload": {
         "psr-4": {
