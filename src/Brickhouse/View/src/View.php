@@ -38,38 +38,6 @@ class View implements Renderable
     }
 
     /**
-     * Creates a new `View`-instance which is named after the same alias, but potentially a different extension.
-     *
-     * @param string                $alias  Alias of the view.
-     * @param array<string,mixed>   $data   Optional data to pass to the view.
-     *
-     * @return null|View
-     */
-    public static function findFallback(string $alias, array $data = []): null|View
-    {
-        // Strip the extension from the view alias, if one was given.
-        if (str_contains(pathinfo($alias, PATHINFO_FILENAME), ".")) {
-            $alias = preg_replace("/\.\w+\.php$/", "", $alias, limit: 1);
-        }
-
-        $candidates = glob(view_path($alias . '.*.php'));
-        if (empty($candidates)) {
-            return null;
-        }
-
-        // The `view` function needs the path to be relative, so we must replace the absolute path
-        // with a relative one.
-        $relativeViewPath = basename($candidates[0]);
-
-        // If a directory was named in `$alias`, prepend it onto the relative path.
-        if (($directory = pathinfo($alias, PATHINFO_DIRNAME))) {
-            $relativeViewPath = $directory . DIRECTORY_SEPARATOR . $relativeViewPath;
-        }
-
-        return view($relativeViewPath, $data);
-    }
-
-    /**
      * Render the view into HTML.
      *
      * @return string

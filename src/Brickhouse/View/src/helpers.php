@@ -1,6 +1,8 @@
 <?php
 
+use Brickhouse\Http\Response;
 use Brickhouse\View\View;
+use Brickhouse\View\ViewFactory;
 
 if (!function_exists("resource_path")) {
     /**
@@ -70,5 +72,20 @@ if (!function_exists("view")) {
     function view(string $path, array $viewbag = []): View
     {
         return View::fromAlias($path, $viewbag);
+    }
+}
+
+if (!function_exists("render")) {
+    /**
+     * Renders a new view from the given alias.
+     *
+     * @param string                $alias      Alias of the view.
+     * @param array<string,mixed>   $viewbag    Optional data to pass to the view.
+     *
+     * @return Response
+     */
+    function render(string $alias, array $viewbag = []): Response
+    {
+        return resolve(ViewFactory::class)->render($alias, $viewbag);
     }
 }

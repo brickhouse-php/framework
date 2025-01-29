@@ -10,7 +10,7 @@ class Extension extends \Brickhouse\Core\Extension
     /**
      * Gets the human-readable name of the extension.
      */
-    public string $name = 'brickhouse/views';
+    public string $name = 'brickhouse/view';
 
     public function __construct(
         private readonly Application $application
@@ -22,6 +22,9 @@ class Extension extends \Brickhouse\Core\Extension
     public function register(): void
     {
         $this->application->singleton(Renderer::class);
+        $this->application->singleton(ViewFactory::class);
+
+        $this->application->singleton(\Brickhouse\View\Contracts\Engine::class, Engine::class);
     }
 
     /**
