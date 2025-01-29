@@ -70,8 +70,8 @@ class ViewFactory
      * Resolves the most fitting engine for the current request.
      *
      * By default, it picks an engine which supports the highest priority format in the `Accept` header.
-     * If the header has no `Accept`-header, returns the first engine.
-     * If no engines fits the request, `null` is returned.
+     * If the header has no `Accept`-header, yields all engine.
+     * If no engines fits the request, nothing is yielded.
      *
      * @return \Generator<int,\Brickhouse\View\Contracts\Engine,void,void>
      */
@@ -84,7 +84,10 @@ class ViewFactory
         $acceptBag = request()->headers->accept();
 
         if ($acceptBag === null) {
-            yield current($this->engines);
+            foreach ($this->engines as $engine) {
+                yield $engine;
+            }
+
             return;
         }
 
