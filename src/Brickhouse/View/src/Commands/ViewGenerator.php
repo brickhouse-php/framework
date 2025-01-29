@@ -42,10 +42,10 @@ class ViewGenerator extends GeneratorCommand
     public function stub(): string
     {
         if ($this->json || resolve(AppConfig::class)->api_only) {
-            return __DIR__ . '/../Stubs/View.stub.json.php';
+            return __DIR__ . '/../Stubs/View.stub.php.json';
         }
 
-        return __DIR__ . '/../Stubs/View.stub.html.php';
+        return __DIR__ . '/../Stubs/View.stub.php.html';
     }
 
     protected function defaultNamespace(string $rootNamespace): string
@@ -62,7 +62,7 @@ class ViewGenerator extends GeneratorCommand
      */
     protected function getPath(string $name): string
     {
-        $extension = $this->json ? '.json.php' : '.html.php';
+        $extension = $this->json ? '.php.json' : '.php.html';
 
         return view_path($name . $extension);
     }

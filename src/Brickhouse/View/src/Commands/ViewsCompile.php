@@ -30,7 +30,7 @@ class ViewsCompile extends Command
 
         $renderer = resolve(Renderer::class);
 
-        $views = glob(view_path("**/*.html.php"));
+        $views = glob(view_path("**/*.php.html"));
         $count = count($views);
 
         foreach ($views as $view) {

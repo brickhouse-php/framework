@@ -26,7 +26,7 @@ class ViewsClear extends Command
      */
     public function handle(): int
     {
-        $views = glob(build_path("**/view-*.php"));
+        $views = glob(build_path("**/view-*"));
         $count = count($views);
 
         foreach ($views as $view) {

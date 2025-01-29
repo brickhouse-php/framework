@@ -30,7 +30,7 @@ class ComponentGenerator extends GeneratorCommand
 
     public function stub(): string
     {
-        return __DIR__ . '/../Stubs/Component.stub.html.php';
+        return __DIR__ . '/../Stubs/Component.stub.php.html';
     }
 
     protected function defaultNamespace(string $rootNamespace): string
@@ -47,7 +47,7 @@ class ComponentGenerator extends GeneratorCommand
      */
     protected function getPath(string $name): string
     {
-        return component_path(strtolower($name) . '.html.php');
+        return component_path(strtolower($name) . '.php.html');
     }
 
     /**

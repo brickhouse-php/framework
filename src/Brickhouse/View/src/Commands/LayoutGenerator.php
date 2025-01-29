@@ -30,7 +30,7 @@ class LayoutGenerator extends GeneratorCommand
 
     public function stub(): string
     {
-        return __DIR__ . '/../Stubs/Layout.stub.html.php';
+        return __DIR__ . '/../Stubs/Layout.stub.php.html';
     }
 
     protected function defaultNamespace(string $rootNamespace): string
@@ -47,7 +47,7 @@ class LayoutGenerator extends GeneratorCommand
      */
     protected function getPath(string $name): string
     {
-        return layout_path($name . '.html.php');
+        return layout_path($name . '.php.html');
     }
 
     /**
