@@ -255,6 +255,9 @@ class Application extends Container
         // Within the HttpKernel, the HTTP request is read and handled, as well as sent back to the client.
         $this->kernel(HttpKernel::class);
 
+        // Terminate container scope, so scoped services from previous requests get removed.
+        $this->terminateScope();
+
         // Call the garbage collector to reduce the chances of it being triggered in the middle of a page generation.
         \gc_collect_cycles();
 
@@ -283,7 +286,7 @@ class Application extends Container
      *
      * @return void
      */
-    public function enqueueWorker(callable $callback, int $maxRequests = 0): void
+    public function enqueueWorker(callable $callback, int $maxRequests = 10_000): void
     {
         $requestHandler = $this->workerRequestHandler();
 
