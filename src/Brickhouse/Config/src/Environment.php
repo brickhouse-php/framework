@@ -15,7 +15,7 @@ final class Environment
     {
         static::$current ??= env('APP_ENV', 'development');
 
-        return static::$current;
+        return strtolower(static::$current);
     }
 
     /**
@@ -27,19 +27,20 @@ final class Environment
      */
     public static function is(string|array $env): bool
     {
-        $env = array_wrap($env);
-
-        return in_array(static::current(), $env);
+        return array_any(
+            array_wrap($env),
+            fn(string $env) => strcasecmp($env, static::$current) === 0
+        );
     }
 
     /**
-     * Gets whether the current environment is 'production'.
+     * Gets whether the current environment is 'production' or 'staging'.
      *
      * @return boolean
      */
     public static function isProduction(): bool
     {
-        return strtolower(static::$current) === 'production';
+        return self::is(['production', 'staging']);
     }
 
     /**
