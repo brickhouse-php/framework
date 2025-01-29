@@ -149,12 +149,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/brickhouse-php/http-transport.git",
-                "reference": "93879f495b35c92bf23a50961d93a5e0990f0bef"
+                "reference": "9ce489455b4aaea5ede37fa566a4f3575b2c7f5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brickhouse-php/http-transport/zipball/93879f495b35c92bf23a50961d93a5e0990f0bef",
-                "reference": "93879f495b35c92bf23a50961d93a5e0990f0bef",
+                "url": "https://api.github.com/repos/brickhouse-php/http-transport/zipball/9ce489455b4aaea5ede37fa566a4f3575b2c7f5f",
+                "reference": "9ce489455b4aaea5ede37fa566a4f3575b2c7f5f",
                 "shasum": ""
             },
             "require": {
@@ -205,7 +205,7 @@
                 "issues": "https://github.com/brickhouse-php/http-transport/issues",
                 "source": "https://github.com/brickhouse-php/http-transport"
             },
-            "time": "2025-01-27T11:39:34+00:00"
+            "time": "2025-01-29T11:47:21+00:00"
         },
         {
             "name": "brickhouse/routing",
