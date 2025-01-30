@@ -272,12 +272,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/brickhouse-php/view-engine.git",
-                "reference": "4e0129aeb6465ca437b03008eaafcd9d2a270191"
+                "reference": "c1339bef207130e525ed422295506660277c1434"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brickhouse-php/view-engine/zipball/4e0129aeb6465ca437b03008eaafcd9d2a270191",
-                "reference": "4e0129aeb6465ca437b03008eaafcd9d2a270191",
+                "url": "https://api.github.com/repos/brickhouse-php/view-engine/zipball/c1339bef207130e525ed422295506660277c1434",
+                "reference": "c1339bef207130e525ed422295506660277c1434",
                 "shasum": ""
             },
             "require": {
@@ -323,7 +323,7 @@
                 "issues": "https://github.com/maxnatamo/brickhouse-view-engine/issues",
                 "source": "https://github.com/maxnatamo/brickhouse-view-engine"
             },
-            "time": "2025-01-24T06:56:22+00:00"
+            "time": "2025-01-30T14:21:42+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
