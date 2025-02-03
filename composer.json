@@ -54,9 +54,11 @@
         "toolkit/pflag": "^2.0"
     },
     "require-dev": {
+        "pestphp/pest-plugin-type-coverage": "^3.2",
         "phpbench/phpbench": "^1.3",
         "phpstan/phpstan": "^2.0",
-        "symplify/monorepo-builder": "^11.2"
+        "symplify/monorepo-builder": "^11.2",
+        "testcontainers/testcontainers": "^0.2.0"
     },
     "replace": {
         "brickhouse/cache": "self.version",
@@ -135,6 +137,12 @@
     "autoload-dev": {
         "psr-4": {
             "Brickhouse\\Benchmarks\\": "benchmarks/",
+            "Brickhouse\\Cache\\Tests\\": "src/Brickhouse/Cache/tests",
+            "Brickhouse\\Container\\Tests\\": "src/Brickhouse/Container/tests",
+            "Brickhouse\\Database\\Tests\\": "src/Brickhouse/Database/tests",
+            "Brickhouse\\Events\\Tests\\": "src/Brickhouse/Events/tests",
+            "Brickhouse\\Http\\Tests\\": "src/Brickhouse/Http/tests",
+            "Brickhouse\\Support\\Tests\\": "src/Brickhouse/Support/tests",
             "Brickhouse\\Tests\\": "tests/"
         }
     },
