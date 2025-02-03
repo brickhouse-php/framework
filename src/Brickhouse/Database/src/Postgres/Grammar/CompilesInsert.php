@@ -53,11 +53,12 @@ trait CompilesInsert
      */
     private function resolveColumnsFromValues(array $values): array
     {
-        /** @var array<int,string> $columns */
+        /** @var list<array<string,mixed>> $columns */
         $columns = array_map(array_keys(...), $values);
         $columns = array_merge(...$columns);
         $columns = array_unique($columns);
 
+        /** @phpstan-ignore return.type */
         return $columns;
     }
 

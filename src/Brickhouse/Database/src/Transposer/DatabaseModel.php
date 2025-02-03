@@ -2,10 +2,10 @@
 
 namespace Brickhouse\Database\Transposer;
 
-use Brickhouse\Database\Builder\ModelQueryBuilder;
 use Brickhouse\Database\ConnectionManager;
-use Brickhouse\Database\Relations\HasRelation;
+use Brickhouse\Database\Transposer\ModelQueryBuilder;
 use Brickhouse\Database\Transposer\Naming\SnakeCaseNamingStrategy;
+use Brickhouse\Database\Transposer\Relations\HasRelation;
 use Brickhouse\Reflection\ReflectedType;
 use Brickhouse\Support\Collection;
 

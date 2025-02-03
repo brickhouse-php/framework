@@ -2,7 +2,7 @@
 
 namespace Brickhouse\Database\Transposer\Concerns;
 
-use Brickhouse\Database\Exceptions;
+use Brickhouse\Database\Transposer\Exceptions;
 use Brickhouse\Database\Transposer\ModelQueryBuilder;
 use Brickhouse\Database\Transposer\Model;
 use Brickhouse\Database\Transposer\Relations\HasMany;
