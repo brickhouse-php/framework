@@ -15,7 +15,7 @@ class View implements Renderable
     public function __construct(
         public readonly string $alias,
         public readonly string $path,
-        public readonly array $data,
+        public array $data,
         public readonly string $template,
     ) {}
 
