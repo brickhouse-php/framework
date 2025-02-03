@@ -3,9 +3,9 @@
 use Brickhouse\Core\Application;
 use Brickhouse\Database\ConnectionManager;
 use Brickhouse\Database\DatabaseConfig;
-use Brickhouse\Database\IsModel;
-use Brickhouse\Database\Model;
-use Brickhouse\Database\Relations\HasMany;
+use Brickhouse\Database\Transposer\DatabaseModel;
+use Brickhouse\Database\Transposer\Model;
+use Brickhouse\Database\Transposer\Relations\HasMany;
 use Brickhouse\Database\Schema\Blueprint;
 use Brickhouse\Database\Schema\Schema;
 use Brickhouse\Database\Sqlite\SqliteConnectionString;
@@ -43,7 +43,7 @@ afterEach(function () {
 
 describe('Model creation', function () {
     it('can create a new model without saving to database', function () {
-        $post = Post::new([
+        Post::new([
             'title' => 'Post Title',
             'body' => 'Some Content'
         ]);
@@ -95,7 +95,7 @@ describe('Model creation', function () {
 
 class Post implements Model
 {
-    use IsModel;
+    use DatabaseModel;
 
     public string $title;
     public string $body;
@@ -103,7 +103,7 @@ class Post implements Model
 
 abstract class AbstractPost implements Model
 {
-    use IsModel;
+    use DatabaseModel;
 
     public string $title;
     public string $body;
@@ -111,7 +111,7 @@ abstract class AbstractPost implements Model
 
 class Author implements Model
 {
-    use IsModel;
+    use DatabaseModel;
 
     public string $name;
 

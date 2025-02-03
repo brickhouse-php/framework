@@ -4,8 +4,7 @@ use Brickhouse\Database\Sqlite\SqliteConnection;
 
 describe('DatabaseConnection::select()', function () {
     it('returns array of returned rows', function () {
-        /** @var SqliteConnection $database */
-        $database = $this->inMemoryDatabase();
+        $database = SqliteConnection::inMemory();
 
         $rows = $database->select("SELECT * FROM (VALUES(1), (2))");
 
@@ -14,4 +13,4 @@ describe('DatabaseConnection::select()', function () {
             ["column1" => 2]
         ]);
     });
-})->group('database');
+})->group('database', 'sqlite');

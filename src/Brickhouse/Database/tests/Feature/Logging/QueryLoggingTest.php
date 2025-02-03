@@ -4,8 +4,7 @@ use Brickhouse\Database\Sqlite\SqliteConnection;
 
 describe('Query logging', function () {
     it('returns empty logs when logging disabled', function () {
-        /** @var SqliteConnection $database */
-        $database = $this->inMemoryDatabase();
+        $database = SqliteConnection::inMemory();
 
         $database->select("SELECT 1");
 
@@ -13,8 +12,7 @@ describe('Query logging', function () {
     });
 
     it('returns single log given single query', function () {
-        /** @var SqliteConnection $database */
-        $database = $this->inMemoryDatabase();
+        $database = SqliteConnection::inMemory();
         $database->enableQueryLogging();
 
         $database->select("SELECT 1");
@@ -28,8 +26,7 @@ describe('Query logging', function () {
     });
 
     it('returns logs given logging period', function () {
-        /** @var SqliteConnection $database */
-        $database = $this->inMemoryDatabase();
+        $database = SqliteConnection::inMemory();
 
         $database->enableQueryLogging();
         $database->select("SELECT 1");

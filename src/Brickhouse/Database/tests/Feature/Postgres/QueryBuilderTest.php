@@ -3,8 +3,7 @@
 use Brickhouse\Database\Builder\QueryBuilder;
 
 beforeEach(function () {
-    $this->connection = test()->inMemoryDatabase();
-    $this->builder = new QueryBuilder($this->connection);
+    $this->builder = new QueryBuilder($this->connection());
 });
 
 describe('QueryBuilder', function () {
@@ -214,4 +213,4 @@ describe('QueryBuilder', function () {
 
         expect($query)->toBe("DELETE FROM users WHERE username = ?");
     });
-})->group('database');
+})->group('postgres');
