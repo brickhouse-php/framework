@@ -1,6 +1,6 @@
 <?php
 
-namespace Brickhouse\Tests\Http;
+namespace Brickhouse\Http\Tests;
 
 abstract class TestCase extends \Brickhouse\Testing\TestCase
 {
