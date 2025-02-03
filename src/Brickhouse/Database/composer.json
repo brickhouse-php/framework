@@ -28,7 +28,6 @@
     "php": "^8.4",
     "ext-pdo": "*",
     "brickhouse/core": "dev-main",
-    "brickhouse/testing": "dev-main",
     "nesbot/carbon": "^3.8.2"
   },
   "require-dev": {
