@@ -239,6 +239,36 @@ if (! function_exists("random_byte_string")) {
     }
 }
 
+if (!function_exists("encrypt")) {
+    /**
+     * Encrypts the given value with the AES-256-GCM cipher.
+     *
+     * @param mixed     $value          Value to encrypt.
+     * @param bool      $serialize      Whether to serialize the value before encrypting.
+     *
+     * @return string
+     */
+    function encrypt(mixed $value, bool $serialize = true): string
+    {
+        return new \Brickhouse\Support\Crypto()->encrypt(...func_get_args());
+    }
+}
+
+if (!function_exists("decrypt")) {
+    /**
+     * Decrypts the given value with the AES-256-GCM cipher.
+     *
+     * @param string    $value          Cipter-text to decrypt.
+     * @param bool      $deserialize    Whether to deserialize the value before decrypting.
+     *
+     * @return mixed
+     */
+    function decrypt(string $value, bool $deserialize = true): mixed
+    {
+        return new \Brickhouse\Support\Crypto()->decrypt(...func_get_args());
+    }
+}
+
 if (! function_exists("path")) {
     /**
      * Join all the given path segments into a single path.
