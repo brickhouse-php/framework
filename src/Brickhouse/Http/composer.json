@@ -24,7 +24,6 @@
   ],
   "require": {
     "php": "^8.4",
-    "brickhouse/channel": "dev-main",
     "brickhouse/core": "dev-main",
     "brickhouse/routing": "dev-main",
     "brickhouse/http-transport": "dev-main",
