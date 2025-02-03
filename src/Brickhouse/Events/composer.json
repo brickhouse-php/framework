@@ -1,36 +1,55 @@
 {
-    "name": "brickhouse/events",
-    "description": "Package for dispatching and handling events across Brickhouse",
-    "license": "MIT",
-    "keywords": ["framework", "brickhouse", "mvc"],
-    "homepage": "https://github.com/brickhouse-php/brickhouse",
-    "support": {
-        "issues": "https://github.com/brickhouse-php/brickhouse/issues",
-        "source": "https://github.com/brickhouse-php/brickhouse"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "authors": [
-        {
-            "name": "Max T. Kristiansen",
-            "email": "me@maxtrier.dk",
-            "role": "Author",
-            "homepage": "https://maxtrier.dk"
-        }
-    ],
-    "require": {
-        "php": "^8.4",
-        "psr/event-dispatcher": "^1.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Brickhouse\\Events\\": "src"
-        },
-        "classmap": [
-            "src/"
-        ],
-        "files": [
-            "src/helpers.php"
-        ]
+  "name": "brickhouse/events",
+  "description": "Package for dispatching and handling events across Brickhouse",
+  "license": "MIT",
+  "keywords": [
+    "framework",
+    "brickhouse",
+    "mvc"
+  ],
+  "homepage": "https://github.com/brickhouse-php/brickhouse",
+  "support": {
+    "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+    "source": "https://github.com/brickhouse-php/brickhouse"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Max T. Kristiansen",
+      "email": "me@maxtrier.dk",
+      "role": "Author",
+      "homepage": "https://maxtrier.dk"
     }
+  ],
+  "require": {
+    "php": "^8.4",
+    "psr/event-dispatcher": "^1.0"
+  },
+  "require-dev": {
+    "brickhouse/testing": "dev-main",
+    "pestphp/pest": "^3.7",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Brickhouse\\Events\\": "src"
+    },
+    "classmap": [
+      "src/"
+    ],
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Brickhouse\\Events\\Tests\\": "tests"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
 }

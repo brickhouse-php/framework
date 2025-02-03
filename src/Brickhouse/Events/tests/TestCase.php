@@ -1,6 +1,6 @@
 <?php
 
-namespace Brickhouse\Tests\Events;
+namespace Brickhouse\Events\Tests;
 
 abstract class TestCase extends \Brickhouse\Testing\TestCase
 {
