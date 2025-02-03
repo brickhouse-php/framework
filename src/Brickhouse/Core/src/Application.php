@@ -135,7 +135,7 @@ class Application extends Container
      */
     private function setBasePath(string $basePath)
     {
-        $this->basePath = $basePath;
+        $this->basePath = realpath($basePath);
         $this->vendorPath = path($this->basePath, "vendor");
         $this->appPath = path($this->basePath, env("APP_DIR", "src"));
         $this->configPath = path($this->basePath, env("APP_CONFIG_DIR", "config"));
