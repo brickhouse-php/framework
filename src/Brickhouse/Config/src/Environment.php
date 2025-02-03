@@ -29,7 +29,7 @@ final class Environment
     {
         return array_any(
             array_wrap($env),
-            fn(string $env) => strcasecmp($env, static::$current) === 0
+            fn(string $env) => strcasecmp($env, static::current()) === 0
         );
     }
 
