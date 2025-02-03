@@ -1,8 +1,9 @@
 <?php
 
-namespace Brickhouse\Database\Builder;
+namespace Brickhouse\Database\Transposer;
 
 use Brickhouse\Database\Builder\Concerns;
+use Brickhouse\Database\Builder\QueryBuilder;
 use Brickhouse\Database\DatabaseConnection;
 use Brickhouse\Database\Model;
 use Brickhouse\Support\Collection;
