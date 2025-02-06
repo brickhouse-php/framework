@@ -2,6 +2,7 @@
 
 namespace Brickhouse\Database;
 
+use Brickhouse\Database\Exceptions\SqlException;
 use Brickhouse\Log\Log;
 
 abstract class DatabaseConnection implements Queryable
@@ -90,7 +91,11 @@ abstract class DatabaseConnection implements Queryable
      */
     protected function prepared(string $query): \PDOStatement
     {
-        return $this->pdo->prepare($query);
+        try {
+            return $this->pdo->prepare($query);
+        } catch (\Throwable $e) {
+            throw new SqlException($query, [], $e);
+        }
     }
 
     /**
@@ -158,9 +163,13 @@ abstract class DatabaseConnection implements Queryable
 
         $bindings = array_values($bindings);
 
-        [$result, $duration] = $this->measureQueryExecution(
-            fn() => $statement->execute($bindings)
-        );
+        try {
+            [$result, $duration] = $this->measureQueryExecution(
+                fn() => $statement->execute($bindings)
+            );
+        } catch (\Throwable $e) {
+            throw new SqlException($query, $bindings, $e);
+        }
 
         $this->logQueryExecution($query, $bindings, $duration);
 

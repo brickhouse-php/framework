@@ -2,70 +2,35 @@
 
 namespace Brickhouse\Database\Transposer;
 
-use Brickhouse\Database\Transposer\ModelQueryBuilder;
-use Brickhouse\Database\Transposer\Relations\HasRelation;
+use Brickhouse\Database\Builder\QueryBuilder;
+use Brickhouse\Database\Transposer\Concerns;
+use Brickhouse\Support\Arrayable;
 use Brickhouse\Support\Collection;
 
-interface Model
+abstract class Model implements \JsonSerializable
 {
+    use Concerns\HasAttributes,
+        Concerns\HasModelQuery,
+        Concerns\HasNamingStrategy,
+        Concerns\HasRelations;
+
     /**
      * Gets the ID of the model.
      *
      * @var null|int|string
      */
-    public $id { get; set; }
+    public $id = null;
 
     /**
      * Gets whether the model exists in the database.
      *
      * @var bool
      */
-    public bool $exists { get; }
+    public bool $exists {
+        get => $this->id !== null;
+    }
 
-    /**
-     * Gets the name of the primary key column.
-     */
-    public static function key(): string;
-
-    /**
-     * Gets the name of the database connection the model is defined on.
-     */
-    public static function connection(): null|string;
-
-    /**
-     * Gets the name of the table to store the model in.
-     */
-    public static function table(): string;
-
-    /**
-     * Gets the naming strategy for the model.
-     *
-     * @return NamingStrategy<self>
-     */
-    public static function naming(): NamingStrategy;
-
-    /**
-     * Creates a query builder for the current model.
-     *
-     * @return ModelQueryBuilder<self>
-     */
-    public static function query(): ModelQueryBuilder;
-
-    /**
-     * Finds the first model with the given ID, if it exists. Otherwise, returns `null`.
-     *
-     * @param   string|int  $id     The ID to query for.
-     *
-     * @return null|self
-     */
-    public static function find(string|int $id): null|self;
-
-    /**
-     * Gets all the current models in the database.
-     *
-     * @return Collection<int,self>
-     */
-    public static function all(): Collection;
+    public final function __construct() {}
 
     /**
      * Creates a new instance of the model without saving it to the database.
@@ -73,9 +38,16 @@ interface Model
      *
      * @param array<string,mixed>   $properties     Optional properties to fill into the model on creation.
      *
-     * @return self
+     * @return static
      */
-    public static function new(array $properties = []): self;
+    public static function new(array $properties = []): static
+    {
+        /** @var self $model */
+        $model = resolve(ModelBuilder::class)
+            ->create(static::class, $properties);
+
+        return $model;
+    }
 
     /**
      * Creates a new instance of the model and saves it to the database.
@@ -83,67 +55,118 @@ interface Model
      *
      * @param array<string,mixed>   $properties     Optional properties to fill into the model on creation.
      *
-     * @return self
+     * @return static
      */
-    public static function create(array $properties = []): self;
+    public static function create(array $properties = []): static
+    {
+        return static::new($properties)->save();
+    }
 
     /**
      * Prints a string-representation of the model to STDOUT.
      *
      * @return void
      */
-    public function inspect(): void;
-
-    /**
-     * Fills the model with the given properties.
-     *
-     * @param array<string,mixed>   $properties
-     *
-     * @return self
-     */
-    public function fill(array $properties): self;
+    public function inspect(): void
+    {
+        echo json_encode($this->jsonSerialize(), JSON_PRETTY_PRINT) . PHP_EOL;
+    }
 
     /**
      * Saves the model to the database and returns the model with it's updated database values.
      *
-     * @param array<string,mixed>   $properties
-     *
-     * @return self
+     * @return static
      */
-    public function save(array $properties = []): self;
+    public function save(): static
+    {
+        $query = $this->query();
+
+        if ($this->exists) {
+            $model = $query->update($this);
+        } else {
+            $model = $query->insert($this);
+        }
+
+        $model->setOriginalAttributes(
+            $model->getProperties(include_relations: true)
+        );
+
+        /** @var self $model */
+        return $model;
+    }
 
     /**
      * Refreshes the model with updated values from the database and returns it.
      *
-     * @return self
+     * @return static
      */
-    public function refresh(): self;
+    public function refresh(): static
+    {
+        if (!$this->exists) {
+            throw new \RuntimeException("Attempted to update model which doesn't exist (" . static::class . ")");
+        }
+
+        $updated = $this->query()->find($this->id);
+        if (!$updated) {
+            throw new \RuntimeException("Could not update model: database entry does not exist (" . static::class . ")");
+        }
+
+        $this->setOriginalAttributes(
+            $updated->getProperties(include_relations: true)
+        );
+
+        $this->fill($updated->getProperties());
+
+        return $this;
+    }
 
     /**
-     * Gets all the property values defined on the model.
+     * Saves all the relational attributes on the model.
      *
-     * @return array<string,mixed>
+     * @return void
      */
-    public function getProperties(): array;
+    public function persistRelationalAttributes(): void
+    {
+        foreach ($this->getDirtyAttributes() as $attribute => $value) {
+            if (!($relation = $this->getModelRelation($attribute))) {
+                continue;
+            }
 
-    /**
-     * Gets all the default values for the properties.
-     *
-     * @return array<string,mixed>
-     */
-    public static function attributeDefaults(): array;
+            /** @var list<Model> $relatedModels */
+            $relatedModels = match (true) {
+                $value instanceof Collection => $value->toArray(),
+                $value instanceof Model => [$value],
+                $value instanceof Arrayable => $value->toArray(),
+                default => (array) $value,
+            };
 
-    /**
-     * Gets the names of all mappable properties on the model.
-     *
-     * @return array<int,string>
-     */
-    public static function mappableAttributes(): array;
+            $foreignColumnName = $this::naming()->foreignKey();
+            $queryBuilder = $this::query()->builder->from($relation->model::table());
 
-    /**
-     * Gets all the relations defined on the model.
-     *
-     * @return array<string,HasRelation<static>>
-     */
-    public static function modelRelations(): array;
+            foreach ($relatedModels as $relatedModel) {
+                $relationModelAttributes = $relatedModel->getInsertableAttributes();
+                $relationModelAttributes[$foreignColumnName] = $this->id;
+
+                if ($relatedModel->exists) {
+                    $queryBuilder->update($relationModelAttributes);
+                } else {
+                    $queryBuilder->insert($relationModelAttributes);
+                }
+            }
+        }
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        $properties = $this->getProperties(include_relations: true);
+
+        foreach ($properties as $idx => $property) {
+            // Serialize nested models as well
+            if ($property instanceof Model) {
+                $properties[$idx] = $property->jsonSerialize();
+            }
+        }
+
+        return $properties;
+    }
 }

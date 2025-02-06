@@ -329,6 +329,10 @@ class QueryBuilder
      */
     public function update(array $values): bool
     {
+        if (empty($values)) {
+            return true;
+        }
+
         $query = $this->grammar->compileUpdate($this, $values);
         $result = $this->connection->statement($query, $this->bindings);
 

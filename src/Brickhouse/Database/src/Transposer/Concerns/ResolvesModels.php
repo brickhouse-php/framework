@@ -7,7 +7,7 @@ use Brickhouse\Database\Transposer\ModelQueryBuilder;
 use Brickhouse\Database\Transposer\Model;
 use Brickhouse\Database\Transposer\Relations\HasMany;
 use Brickhouse\Database\Transposer\Relations\HasOne;
-use Brickhouse\Database\Transposer\Relations\HasRelation;
+use Brickhouse\Database\Transposer\Relations\Relation;
 use Brickhouse\Reflection\ReflectedProperty;
 use Brickhouse\Reflection\ReflectedType;
 use Brickhouse\Support\Collection;
@@ -102,7 +102,7 @@ trait ResolvesModels
      */
     protected function resolveModelRelation(ReflectedProperty $property, Collection $rows): Collection
     {
-        // Resolve an instance of the `HasRelation` attribute.
+        // Resolve an instance of the `Relation` attribute.
         $relation = $this->resolvePropertyRelationAttribute($property);
 
         if ($relation instanceof HasOne) {
@@ -117,19 +117,19 @@ trait ResolvesModels
     }
 
     /**
-     * Attempts to get a `HasRelation` attribute from the given property.
+     * Attempts to get a `Relation` attribute from the given property.
      * If one isn't defined, but the property has a valid `Model` type, an appropriate `HasOne` relation is returned instead.
      *
      * @param ReflectedProperty $property   The property to retrieve the relation from.
      *
-     * @return HasRelation<Model>
+     * @return Relation<Model>
      *
      * @throws Exceptions\InvalidRelationAttributeException Thrown if no attribute is found and no valid type is given.
      * @throws Exceptions\InvalidRelationTypeException      Thrown if no attribute is found and the type isn't implementing the `Model`-class.
      */
-    protected function resolvePropertyRelationAttribute(ReflectedProperty $property): HasRelation
+    protected function resolvePropertyRelationAttribute(ReflectedProperty $property): Relation
     {
-        $relationAttribute = $property->attribute(HasRelation::class, inherit: true);
+        $relationAttribute = $property->attribute(Relation::class, inherit: true);
 
         if (!$relationAttribute) {
             $relationType = $property->type();
@@ -163,22 +163,22 @@ trait ResolvesModels
         $builder = new ModelQueryBuilder($relation->model, $this->connection);
         $this->withSubRelations($builder, $property->name);
 
-        $column = $relation->column ?? "{$property->name}_id";
-        $referencedColumn = $relation->referencedColumn ?? "id";
+        $foreignColumn = $relation->foreignColumn ?? $this->modelClass::naming()->foreignKey();
+        $keyColumn = $relation->keyColumn ?? $relation->model::key();
 
         $keys = [];
         foreach ($rows as $row) {
-            $keys[] = $row[$column];
+            $keys[] = $row[$keyColumn];
         }
 
         $models = $builder
-            ->whereIn($referencedColumn, $keys)
+            ->whereIn($foreignColumn, $keys)
             ->all()
-            ->keyBy($referencedColumn);
+            ->groupBy($foreignColumn);
 
         foreach ($rows->keys() as $idx) {
             $row = $rows[$idx];
-            $row[$property->name] = $models[$row[$column]];
+            $row[$property->name] = $models[$row[$keyColumn]];
 
             $rows[$idx] = $row;
         }
@@ -201,7 +201,7 @@ trait ResolvesModels
         $this->withSubRelations($builder, $property->name);
 
         $foreignColumn = $relation->foreignColumn ?? $this->modelClass::naming()->foreignKey();
-        $keyColumn = $relation->keyColumn ?? "id";
+        $keyColumn = $relation->keyColumn ?? $relation->model::key();
 
         $keys = [];
         foreach ($rows as $row) {

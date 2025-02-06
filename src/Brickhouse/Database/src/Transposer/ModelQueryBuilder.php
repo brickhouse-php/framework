@@ -6,6 +6,7 @@ use Brickhouse\Database\Builder\QueryBuilder;
 use Brickhouse\Database\DatabaseConnection;
 use Brickhouse\Database\Transposer\Concerns;
 use Brickhouse\Database\Transposer\Model;
+use Brickhouse\Database\Transposer\Relations\HasRelation;
 use Brickhouse\Support\Collection;
 
 /**
@@ -21,7 +22,7 @@ class ModelQueryBuilder
      *
      * @var QueryBuilder
      */
-    protected readonly QueryBuilder $builder;
+    public readonly QueryBuilder $builder;
 
     /**
      * Array of relations to load into the model.
@@ -166,18 +167,12 @@ class ModelQueryBuilder
      */
     public function insert(Model $model): Model
     {
-        $values = [];
+        $values = $model->getInsertableAttributes();
 
-        foreach ($model->getProperties() as $key => $value) {
-            // Let the database create the key for us.
-            if ($key === $model::key()) {
-                continue;
-            }
+        $model->id = $this->builder->insert($values)[0][$model::key()];
 
-            $values[$key] = $value;
-        }
-
-        $model->id = $this->builder->insert($values)[0]['id'];
+        // Update all the relational attributes of the model after saving the model itself.
+        $model->persistRelationalAttributes();
 
         return $model->refresh();
     }
@@ -191,20 +186,16 @@ class ModelQueryBuilder
      */
     public function update(Model $model): Model
     {
-        $values = [];
+        // Update all the relational attributes of the model before updating the model itself.
+        $model->persistRelationalAttributes();
 
-        foreach ($model->getProperties() as $key => $value) {
-            // We should never update the key, as it might have some severe consequences.
-            if ($key === $model::key()) {
-                continue;
-            }
-
-            $values[$key] = $value;
-        }
+        // Since we just updated all relations, we retrieve only the dirty attributes which
+        // are non-relational.
+        $attributesToUpdate = $model->getDirtyAttributes(include_relations: false);
 
         $this->builder
             ->where('id', $model->id)
-            ->update($values);
+            ->update($attributesToUpdate);
 
         return $model->refresh();
     }
@@ -228,5 +219,44 @@ class ModelQueryBuilder
         }
 
         return $model;
+    }
+
+    protected function saveDependencyModelRelations(Model $model): void
+    {
+        $mapModelAttributes = static function (string $foreignKey, mixed $parentId, Model $relationModel) {
+            $values = $relationModel->getInsertableAttributes();
+            $values[$foreignKey] = $parentId;
+
+            return $values;
+        };
+
+        foreach ($model->getModelRelations() as $property => $relation) {
+            // This method only handles `HasRelation` relations, as the parent model is required
+            // to exist first, before these relations can be persisted to the database.
+            if (!$relation instanceof HasRelation) {
+                continue;
+            }
+
+            // If the property is unset on the model, skip it for now.
+            if (!isset($model->$property)) {
+                continue;
+            }
+
+            /** @var array<int,Model> $relationModels */
+            $relationModels = array_wrap($model->$property);
+
+            $foreignColumnName = $model::naming()->foreignKey();
+            $queryBuilder = new QueryBuilder($this->connection)->from($relation->model::table());
+
+            $newModels = array_filter($relationModels, fn(Model $model) => !$model->exists);
+            $newModels = array_map(
+                fn(Model $m) => $mapModelAttributes($foreignColumnName, $model->id, $m),
+                $newModels
+            );
+
+            if (!empty($newModels)) {
+                $queryBuilder->insert($newModels);
+            }
+        }
     }
 }

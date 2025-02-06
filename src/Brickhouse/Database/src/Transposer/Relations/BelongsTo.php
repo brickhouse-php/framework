@@ -7,9 +7,10 @@ use Brickhouse\Database\Transposer\Model;
 /**
  * @template TModel of Model
  *
- * @extends Relation<TModel>
+ * @extends HasRelation<TModel>
  */
-abstract class HasRelation extends Relation
+#[\Attribute(flags: \Attribute::TARGET_PROPERTY)]
+class BelongsTo extends Relation
 {
     /**
      * @param class-string<TModel>  $model
