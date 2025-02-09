@@ -58,7 +58,6 @@
         "pestphp/pest-plugin-type-coverage": "^3.2",
         "phpbench/phpbench": "^1.3",
         "phpstan/phpstan": "^2.0",
-        "psy/psysh": "^0",
         "symplify/monorepo-builder": "^11.2",
         "testcontainers/testcontainers": "^0.2.0"
     },
@@ -75,7 +74,6 @@
         "brickhouse/log": "self.version",
         "brickhouse/process": "self.version",
         "brickhouse/reflection": "self.version",
-        "brickhouse/shell": "self.version",
         "brickhouse/support": "self.version",
         "brickhouse/testing": "self.version",
         "brickhouse/view": "self.version"
@@ -143,14 +141,10 @@
             "Brickhouse\\Database\\Tests\\": "src/Brickhouse/Database/tests",
             "Brickhouse\\Events\\Tests\\": "src/Brickhouse/Events/tests",
             "Brickhouse\\Http\\Tests\\": "src/Brickhouse/Http/tests",
-            "Brickhouse\\Shell\\": "src/Brickhouse/Shell/src",
             "Brickhouse\\Support\\Tests\\": "src/Brickhouse/Support/tests",
             "Brickhouse\\Testing\\": "src/Brickhouse/Testing/src/src",
             "Brickhouse\\Tests\\": "tests/"
-        },
-        "classmap": [
-            "src/Brickhouse/Shell/src/"
-        ]
+        }
     },
     "config": {
         "sort-packages": true,
@@ -166,7 +160,6 @@
                 "\\Brickhouse\\Database\\Extension",
                 "\\Brickhouse\\Http\\Extension",
                 "\\Brickhouse\\Log\\Extension",
-                "\\Brickhouse\\Shell\\Extension",
                 "\\Brickhouse\\View\\Extension"
             ]
         }
