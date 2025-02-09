@@ -241,7 +241,7 @@ trait HasAttributes
             return $this->mappableAttributes;
         }
 
-        $properties = [];
+        $properties = [self::key()];
 
         foreach (new ReflectedType(static::class)->getProperties() as $prop) {
             if (!$prop->public() || $prop->readonly() || $prop->abstract() || $prop->static() || $prop->hooked()) {
@@ -249,6 +249,10 @@ trait HasAttributes
             }
 
             if ($prop->attribute(Ignore::class) !== null) {
+                continue;
+            }
+
+            if (in_array($prop->name, $properties)) {
                 continue;
             }
 
