@@ -286,7 +286,7 @@ class Application extends Container
      *
      * @return void
      */
-    public function enqueueWorker(callable $callback, int $maxRequests = 10_000): void
+    public function enqueueWorker(callable $callback, int $maxRequests = 1_000): void
     {
         $requestHandler = $this->workerRequestHandler();
 
