@@ -249,20 +249,24 @@ class Collection implements Enumerable, Renderable, Arrayable, \Stringable, \Jso
     /**
      * Groups all the items in the array by a field in their values.
      *
-     * @param string    $key
+     * @param string|callable(TValue):array-key     $key
      *
-     * @return static<array-key,TValue>
+     * @return static<array-key,array<TKey,TValue>>
      */
-    public function groupBy(string $key): Collection
+    public function groupBy(string|callable $key): Collection
     {
         $groups = [];
 
-        foreach ($this->items as $item) {
-            // @phpstan-ignore offsetAccess.notFound
-            $key = is_array($item) ? $item[$key] : $item->$key;
+        $keyResolver = is_string($key)
+            ? fn(mixed $item) => is_array($item) ? $item[$key] : $item->$key
+            : $key;
 
-            $groups[$key] ??= [];
-            $groups[$key][] = $item;
+        foreach ($this->items as $key => $item) {
+            // @phpstan-ignore offsetAccess.notFound
+            $groupKey = $keyResolver($item);
+
+            $groups[$groupKey] ??= [];
+            $groups[$groupKey][$key] = $item;
         }
 
         return new static($groups);
@@ -303,6 +307,20 @@ class Collection implements Enumerable, Renderable, Arrayable, \Stringable, \Jso
         $values = [...$this->items];
 
         usort($values, $callback);
+
+        return new static($values);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return static<TKey,TValue>
+     */
+    public function sortKeys(): Collection
+    {
+        $values = [...$this->items];
+
+        ksort($values);
 
         return new static($values);
     }
