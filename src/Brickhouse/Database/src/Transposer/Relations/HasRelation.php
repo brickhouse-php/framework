@@ -23,4 +23,28 @@ abstract class HasRelation extends Relation
     ) {
         parent::__construct($model);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function guessMatchingRelation(string|Model $model): string
+    {
+        if ($model instanceof Model) {
+            $model = $model::class;
+        }
+
+        foreach (new $this->model()->getModelRelations() as $property => $relation) {
+            if (!$relation instanceof BelongsTo) {
+                continue;
+            }
+
+            if ($relation->model !== $model) {
+                continue;
+            }
+
+            return $property;
+        }
+
+        throw new \RuntimeException("Failed to determine matching BelongsTo relation on " . $model);
+    }
 }

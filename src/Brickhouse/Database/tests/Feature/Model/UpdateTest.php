@@ -63,6 +63,15 @@ describe('Model update', function () {
         expect(Post::query()->first()->title)->toBe('Some Other Title');
     });
 
+    it('skips update if nothing is changed', function () {
+        $connection = resolve(ConnectionManager::class)->connection();
+        $post = Post::create(['title' => 'Post Title', 'body' => 'Some Content']);
+
+        $queryLog = $connection->withQueryLog(fn() => $post->save());
+
+        expect($queryLog)->toBeEmpty();
+    });
+
     it('updates using only dirty attributes', function () {
         $connection = resolve(ConnectionManager::class)->connection();
 
@@ -82,29 +91,24 @@ describe('Model update', function () {
     });
 
     it('updates related models (has-one)', function () {
-        $connection = resolve(ConnectionManager::class)->connection();
-
         $supplier = Supplier::create([
             'name' => 'Example Ltd.',
             'account' => Account::new(['account_number' => '01010101'])
         ]);
 
-        $result = Supplier::find($supplier->id)->load('account');
+        $result = Supplier::with('account')->find($supplier->id);
         expect($result->name)->toBe('Example Ltd.');
         expect($result->account->account_number)->toBe('01010101');
 
         $supplier->account = Account::new(['account_number' => '12121212']);
         $supplier->save();
 
-        $connection->enableQueryLogging();
-        $result = Supplier::find($supplier->id)->load('account');
-        $connection->disableQueryLogging();
-        var_dump($connection->getQueryLog());
+        $result = Supplier::with('account')->find($supplier->id);
+
         expect($result->name)->toBe('Example Ltd.');
         expect($result->account->account_number)->toBe('12121212');
 
-        expect(Account::all()->toArray())->toHaveCount(2)->sequence(
-            fn($account) => $account->account_number->toBe('01010101'),
+        expect(Account::all()->toArray())->toHaveCount(1)->sequence(
             fn($account) => $account->account_number->toBe('12121212'),
         );
     });

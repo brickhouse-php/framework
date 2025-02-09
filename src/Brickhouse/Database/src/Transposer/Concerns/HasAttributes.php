@@ -2,18 +2,27 @@
 
 namespace Brickhouse\Database\Transposer\Concerns;
 
+use Brickhouse\Database\Transposer\Ignore;
+use Brickhouse\Database\Transposer\Model;
+use Brickhouse\Database\Transposer\Relations\BelongsTo;
 use Brickhouse\Database\Transposer\Relations\Relation;
 use Brickhouse\Reflection\ReflectedProperty;
 use Brickhouse\Reflection\ReflectedType;
 
+/**
+ * @template TModel of Model
+ *
+ * @phpstan-require-extends Model
+ */
 trait HasAttributes
 {
+    /** @use HasNamingStrategy<TModel> */
     use HasNamingStrategy;
 
     /**
      * Contains the mappable attributes of the model.
      *
-     * @var array<string,mixed>
+     * @var array<int,string>
      */
     private array $mappableAttributes;
 
@@ -25,9 +34,16 @@ trait HasAttributes
     private array $originalAttributes = [];
 
     /**
+     * Contains database columns which don't map to any specific model attribute.
+     *
+     * @var array<string,mixed>
+     */
+    private array $auxiliaryAttributes = [];
+
+    /**
      * Contains the names of all relational attributes on the model.
      *
-     * @var array<string,Relation>
+     * @var array<string,Relation<*>>
      */
     private array $relationalAttributes;
 
@@ -38,17 +54,14 @@ trait HasAttributes
      *
      * @return self
      */
-    public function fill(array $properties): static
+    public function fill(array $properties): self
     {
-        $mappable = $this->getMappableAttributes();
-        $relations = $this->getModelRelations();
-
-        foreach ($mappable as $property) {
-            if (! array_key_exists($property, $properties)) {
+        foreach ($this->getMappableAttributes() as $property) {
+            if (!array_key_exists($property, $properties)) {
                 continue;
             }
 
-            if (in_array($property, array_keys($relations))) {
+            if ($this->isModelRelation($property)) {
                 continue;
             }
 
@@ -102,11 +115,26 @@ trait HasAttributes
      */
     public function getInsertableAttributes(): array
     {
-        return array_filter(
+        $attributes = array_filter(
             $this->getProperties(include_relations: false),
             fn(string $key) => $key !== self::key(),
             ARRAY_FILTER_USE_KEY
         );
+
+        foreach ($this->getModelRelations() as $property => $relation) {
+            if (!isset($this->$property)) {
+                continue;
+            }
+
+            if (!$relation instanceof BelongsTo) {
+                continue;
+            }
+
+            $columnName = $relation->model::naming()->foreignKey();
+            $attributes[$columnName] = $this->$property->id;
+        }
+
+        return $attributes;
     }
 
     /**
@@ -129,6 +157,29 @@ trait HasAttributes
     public function setOriginalAttributes(array $attributes): void
     {
         $this->originalAttributes = $attributes;
+    }
+
+    /**
+     * Gets the auxiliary attributes of the model.
+     *
+     * @return array<string,mixed>
+     */
+    public function getAuxiliaryAttributes(): array
+    {
+        return $this->auxiliaryAttributes;
+    }
+
+    /**
+     * Adds an auxiliary attribute to the model.
+     *
+     * @param string        $key
+     * @param mixed         $value
+     *
+     * @return void
+     */
+    public function addAuxiliaryAttribute(string $key, mixed $value): void
+    {
+        $this->auxiliaryAttributes[$key] = $value;
     }
 
     /**
@@ -172,6 +223,10 @@ trait HasAttributes
      */
     public function isDirty(): bool
     {
+        if (!$this->exists) {
+            return true;
+        }
+
         return !empty($this->getDirtyAttributes(include_relations: true));
     }
 
@@ -186,10 +241,14 @@ trait HasAttributes
             return $this->mappableAttributes;
         }
 
-        $properties = [static::key()];
+        $properties = [];
 
         foreach (new ReflectedType(static::class)->getProperties() as $prop) {
             if (!$prop->public() || $prop->readonly() || $prop->abstract() || $prop->static() || $prop->hooked()) {
+                continue;
+            }
+
+            if ($prop->attribute(Ignore::class) !== null) {
                 continue;
             }
 
@@ -229,7 +288,7 @@ trait HasAttributes
     /**
      * Gets all the relations defined on the model.
      *
-     * @return array<string,Relation<static>>
+     * @return array<string,Relation<*>>
      */
     public function getModelRelations(): array
     {
@@ -239,11 +298,7 @@ trait HasAttributes
 
         $relations = [];
 
-        foreach (new ReflectedType(static::class)->getProperties() as $property) {
-            if (!$property->public() || $property->readonly() || $property->abstract() || $property->static()) {
-                continue;
-            }
-
+        foreach ($this->getMappableAttributeProperties() as $property) {
             $relation = $property->attribute(Relation::class, inherit: true);
             if (!$relation) {
                 continue;
@@ -278,7 +333,7 @@ trait HasAttributes
      *
      * @param string    $key
      *
-     * @return ?Relation
+     * @return ?Relation<*>
      */
     public function getModelRelation(string $key): ?Relation
     {

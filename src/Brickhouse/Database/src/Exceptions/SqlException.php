@@ -4,6 +4,11 @@ namespace Brickhouse\Database\Exceptions;
 
 class SqlException extends \PDOException
 {
+    /**
+     * @param string $query
+     * @param array<int|string,mixed> $bindings
+     * @param ?\Throwable $previous
+     */
     public function __construct(
         public readonly string $query,
         public readonly array $bindings = [],

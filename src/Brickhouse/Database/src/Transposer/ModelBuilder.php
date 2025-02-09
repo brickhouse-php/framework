@@ -34,7 +34,7 @@ class ModelBuilder
      *
      * @return TModel
      */
-    public function create(string $model, array $attributes)
+    public function create(string $model, array $attributes): Model
     {
         try {
             $reflector = new ReflectedType($model);
@@ -63,7 +63,6 @@ class ModelBuilder
     protected function loadModelAttributes(Model $instance, array $attributes): void
     {
         $properties = $instance->getMappableAttributeProperties();
-        $relations = $instance->getModelRelations();
         $defaults = $instance::attributeDefaults();
 
         foreach ($properties as $property) {
@@ -83,7 +82,7 @@ class ModelBuilder
                 continue;
             }
 
-            if (in_array($property->name, array_keys($relations))) {
+            if ($instance->isModelRelation($property->name)) {
                 continue;
             }
 
@@ -95,7 +94,9 @@ class ModelBuilder
                 continue;
             }
 
+            // If the property doesn't exist on the model instance, set it as an auxiliary value.
             if (!property_exists($instance, $key)) {
+                $instance->addAuxiliaryAttribute($key, $value);
                 continue;
             }
 

@@ -2,16 +2,20 @@
 
 namespace Brickhouse\Database\Transposer\Concerns;
 
+use Brickhouse\Database\Transposer\Model;
 use Brickhouse\Database\Transposer\Naming\SnakeCaseNamingStrategy;
 use Brickhouse\Database\Transposer\NamingStrategy;
 use Brickhouse\Reflection\ReflectedType;
 
+/**
+ * @template TModel of Model
+ */
 trait HasNamingStrategy
 {
     /**
      * Contains an instance of the default naming strategy.
      *
-     * @var null|NamingStrategy
+     * @var null|NamingStrategy<TModel>
      */
     private static null|NamingStrategy $defaultNamingStrategy;
 
@@ -42,6 +46,6 @@ trait HasNamingStrategy
             return $value;
         }
 
-        return (static::$defaultNamingStrategy ?? new SnakeCaseNamingStrategy(static::class));
+        return (self::$defaultNamingStrategy ?? new SnakeCaseNamingStrategy(static::class));
     }
 }

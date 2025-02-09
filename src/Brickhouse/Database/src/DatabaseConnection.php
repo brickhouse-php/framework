@@ -104,7 +104,7 @@ abstract class DatabaseConnection implements Queryable
     public function select(string $query, array $bindings = []): array
     {
         return $this->execute(
-            fn($statement) => $statement->fetchAll($this->fetchMode),
+            fn(\PDOStatement $statement) => $statement->fetchAll($this->fetchMode),
             $query,
             $bindings
         );
@@ -116,7 +116,7 @@ abstract class DatabaseConnection implements Queryable
     public function selectSingle(string $query, array $bindings = []): array|false
     {
         return $this->execute(
-            fn($statement) => $statement->fetch($this->fetchMode),
+            fn(\PDOStatement $statement) => $statement->fetch($this->fetchMode),
             $query,
             $bindings
         );
@@ -128,7 +128,7 @@ abstract class DatabaseConnection implements Queryable
     public function statement(string $query, array $bindings = []): bool
     {
         return $this->execute(
-            fn($statement, $result) => $result,
+            fn(\PDOStatement $statement, bool $result) => $result,
             $query,
             $bindings
         );
@@ -140,7 +140,7 @@ abstract class DatabaseConnection implements Queryable
     public function affectingStatement(string $query, array $bindings = []): int
     {
         return $this->execute(
-            fn($statement) => $statement->rowCount(),
+            fn(\PDOStatement $statement) => $statement->rowCount(),
             $query,
             $bindings
         );
@@ -153,11 +153,11 @@ abstract class DatabaseConnection implements Queryable
      *
      * @param \Closure(\PDOStatement, bool): TReturn    $callback
      * @param non-empty-string                          $query
-     * @param array<int|string,mixed>                   $bindings
+     * @param array<int,mixed>                          $bindings
      *
      * @return TReturn
      */
-    protected function execute(\Closure $callback, string $query, array $bindings = [])
+    protected function execute(\Closure $callback, string $query, array $bindings = []): mixed
     {
         $statement = $this->prepared($query);
 
@@ -197,9 +197,9 @@ abstract class DatabaseConnection implements Queryable
     /**
      * Logs the given query parameters, if query logging is enabled.
      *
-     * @param string            $query
-     * @param array<int,mixed>  $bindings
-     * @param float             $duration
+     * @param string                $query
+     * @param array<int,mixed>      $bindings
+     * @param float                 $duration
      *
      * @return void
      */
@@ -244,6 +244,25 @@ abstract class DatabaseConnection implements Queryable
     public final function getQueryLog(): array
     {
         return $this->statements;
+    }
+
+    /**
+     * Enables query logging for the duration of the given callback and returns the query logs.
+     *
+     * @param callable():void       $callback
+     *
+     * @return array<int,array{query:string,bindings:array<int|string,mixed>}>
+     *
+     * @see \Brickhouse\Database\DatabaseConnection::enableQueryLogging()
+     * @see \Brickhouse\Database\DatabaseConnection::disableQueryLogging()
+     */
+    public final function withQueryLog(callable $callback): array
+    {
+        $this->enableQueryLogging();
+        $callback();
+        $this->disableQueryLogging();
+
+        return $this->getQueryLog();
     }
 
     /**

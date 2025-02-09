@@ -8,6 +8,7 @@ use Brickhouse\Database\Transposer\Relations\HasMany;
 use Brickhouse\Database\Schema\Blueprint;
 use Brickhouse\Database\Schema\Schema;
 use Brickhouse\Database\Sqlite\SqliteConnectionString;
+use Brickhouse\Database\Transposer\Relations\BelongsTo;
 use Brickhouse\Database\Transposer\Relations\HasOne;
 
 beforeEach(function () {
@@ -99,7 +100,7 @@ describe('Model creation', function () {
             ]),
         ]);
 
-        $result = Supplier::find($supplier->id)->load('account');
+        $result = Supplier::with('account')->find($supplier->id);
 
         expect($result->name)->toBe('Food Supplies Inc.');
         expect($result->account->account_number)->toBe('0101010101');
@@ -135,6 +136,9 @@ class Post extends Model
 {
     public string $title;
     public string $body;
+
+    #[BelongsTo(Author::class)]
+    public Author $author;
 }
 
 abstract class AbstractPost extends Model
@@ -155,11 +159,14 @@ class Supplier extends Model
 {
     public string $name;
 
-    #[HasOne(Account::class)]
+    #[HasOne(Account::class, destroyDependent: true)]
     public Account $account;
 }
 
 class Account extends Model
 {
     public string $account_number;
+
+    #[BelongsTo(Supplier::class)]
+    public Supplier $supplier;
 }

@@ -2,24 +2,33 @@
 
 namespace Brickhouse\Database\Transposer;
 
-use Brickhouse\Database\Builder\QueryBuilder;
 use Brickhouse\Database\Transposer\Concerns;
-use Brickhouse\Support\Arrayable;
-use Brickhouse\Support\Collection;
+use Brickhouse\Database\Transposer\Exceptions\UnloadedRelationException;
 
 abstract class Model implements \JsonSerializable
 {
-    use Concerns\HasAttributes,
-        Concerns\HasModelQuery,
-        Concerns\HasNamingStrategy,
-        Concerns\HasRelations;
+    /** @use Concerns\HasAttributes<self> */
+    use Concerns\HasAttributes;
+
+    /** @use Concerns\HasModelQuery<self> */
+    use Concerns\HasModelQuery;
+
+    /** @use Concerns\HasNamingStrategy<self> */
+    use Concerns\HasNamingStrategy;
+
+    /** @use Concerns\HasRelations<self> */
+    use Concerns\HasRelations;
+
+    public const int STATE_NEW = 0;
+    public const int STATE_PERSISTING = 1;
+    public const int STATE_PERSISTED = 2;
 
     /**
      * Gets the ID of the model.
      *
      * @var null|int|string
      */
-    public $id = null;
+    public null|int|string $id = null;
 
     /**
      * Gets whether the model exists in the database.
@@ -29,6 +38,14 @@ abstract class Model implements \JsonSerializable
     public bool $exists {
         get => $this->id !== null;
     }
+
+    /**
+     * Gets the current state of the model.
+     *
+     * @var int
+     */
+    #[Ignore]
+    public int $modelState = self::STATE_NEW;
 
     public final function __construct() {}
 
@@ -42,7 +59,7 @@ abstract class Model implements \JsonSerializable
      */
     public static function new(array $properties = []): static
     {
-        /** @var self $model */
+        /** @var static $model */
         $model = resolve(ModelBuilder::class)
             ->create(static::class, $properties);
 
@@ -63,13 +80,13 @@ abstract class Model implements \JsonSerializable
     }
 
     /**
-     * Prints a string-representation of the model to STDOUT.
+     * Returns a string-representation of the model.
      *
-     * @return void
+     * @return string
      */
-    public function inspect(): void
+    public function inspect(): string
     {
-        echo json_encode($this->jsonSerialize(), JSON_PRETTY_PRINT) . PHP_EOL;
+        return json_encode($this->jsonSerialize(), JSON_PRETTY_PRINT);
     }
 
     /**
@@ -79,20 +96,13 @@ abstract class Model implements \JsonSerializable
      */
     public function save(): static
     {
-        $query = $this->query();
-
-        if ($this->exists) {
-            $model = $query->update($this);
-        } else {
-            $model = $query->insert($this);
+        // If the model hasn't been altered since it was retrieved from the database,
+        // we'll cut the method short and return straight away.
+        if (!$this->isDirty()) {
+            return $this;
         }
 
-        $model->setOriginalAttributes(
-            $model->getProperties(include_relations: true)
-        );
-
-        /** @var self $model */
-        return $model;
+        return new ChangeTracker()->save($this);
     }
 
     /**
@@ -121,39 +131,13 @@ abstract class Model implements \JsonSerializable
     }
 
     /**
-     * Saves all the relational attributes on the model.
+     * Deletes the model from the database.
      *
-     * @return void
+     * @return self
      */
-    public function persistRelationalAttributes(): void
+    public function delete(): self
     {
-        foreach ($this->getDirtyAttributes() as $attribute => $value) {
-            if (!($relation = $this->getModelRelation($attribute))) {
-                continue;
-            }
-
-            /** @var list<Model> $relatedModels */
-            $relatedModels = match (true) {
-                $value instanceof Collection => $value->toArray(),
-                $value instanceof Model => [$value],
-                $value instanceof Arrayable => $value->toArray(),
-                default => (array) $value,
-            };
-
-            $foreignColumnName = $this::naming()->foreignKey();
-            $queryBuilder = $this::query()->builder->from($relation->model::table());
-
-            foreach ($relatedModels as $relatedModel) {
-                $relationModelAttributes = $relatedModel->getInsertableAttributes();
-                $relationModelAttributes[$foreignColumnName] = $this->id;
-
-                if ($relatedModel->exists) {
-                    $queryBuilder->update($relationModelAttributes);
-                } else {
-                    $queryBuilder->insert($relationModelAttributes);
-                }
-            }
-        }
+        return $this->query()->delete($this);
     }
 
     public function jsonSerialize(): mixed
@@ -168,5 +152,27 @@ abstract class Model implements \JsonSerializable
         }
 
         return $properties;
+    }
+
+    /**
+     * Dynamically retrieves properties from the model, which don't match any other property.
+     */
+    public function __get(string $key): mixed
+    {
+        // If the caller is attempting to retrieve a relational attribute, but it is uninitialized,
+        // it is likely because they haven't loaded the relation yet.
+        if ($this->isModelRelation($key)) {
+            throw new UnloadedRelationException($this::class, $key);
+        }
+
+        // If the property doesn't exist in the model, it might be attempting to reference a column
+        // value which was retrieved when querying the model. This is mostly for retrieving IDs in relations,
+        // as they wouldn't have their own property on the model.
+        $auxiliaryAttributes = $this->getAuxiliaryAttributes();
+        if (isset($auxiliaryAttributes[$key])) {
+            return $auxiliaryAttributes[$key];
+        }
+
+        throw new \RuntimeException('Invalid model property: ' . $this::class . '::' . $key);
     }
 }

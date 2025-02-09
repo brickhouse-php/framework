@@ -3,8 +3,10 @@
 namespace Brickhouse\Database\Transposer\Concerns;
 
 use Brickhouse\Database\Transposer\Exceptions;
+use Brickhouse\Database\Transposer\Exceptions\UnresolvableHasOneException;
 use Brickhouse\Database\Transposer\ModelQueryBuilder;
 use Brickhouse\Database\Transposer\Model;
+use Brickhouse\Database\Transposer\Relations\BelongsTo;
 use Brickhouse\Database\Transposer\Relations\HasMany;
 use Brickhouse\Database\Transposer\Relations\HasOne;
 use Brickhouse\Database\Transposer\Relations\Relation;
@@ -14,6 +16,8 @@ use Brickhouse\Support\Collection;
 
 /**
  * @template TModel of Model
+ *
+ * @property-read   class-string<TModel>    $modelClass
  */
 trait ResolvesModels
 {
@@ -113,6 +117,10 @@ trait ResolvesModels
             return $this->resolveMultipleModelRelation($property, $relation, $rows);
         }
 
+        if ($relation instanceof BelongsTo) {
+            return $this->resolveReferencingModelRelation($property, $relation, $rows);
+        }
+
         throw new Exceptions\UnsupportedRelationException($this->modelClass, $property->name, $relation::class);
     }
 
@@ -178,7 +186,19 @@ trait ResolvesModels
 
         foreach ($rows->keys() as $idx) {
             $row = $rows[$idx];
-            $row[$property->name] = $models[$row[$keyColumn]];
+
+            $modelId = $row[$keyColumn];
+            $modelsForRow = $models[$modelId] ?? [];
+
+            if (count($modelsForRow) !== 1) {
+                throw new UnresolvableHasOneException(
+                    $this->modelClass,
+                    $property->name,
+                    Collection::wrap($modelsForRow)
+                );
+            }
+
+            $row[$property->name] = $modelsForRow[0];
 
             $rows[$idx] = $row;
         }
@@ -217,6 +237,45 @@ trait ResolvesModels
             $row = $rows[$idx];
             $row[$property->name] = $models[$row[$keyColumn]];
 
+            $rows[$idx] = $row;
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Resolve a `BelongsTo` relation on the given property.
+     *
+     * @param ReflectedProperty                     $property
+     * @param BelongsTo<TModel>                     $relation
+     * @param Collection<int,array<string,mixed>>   $rows
+     *
+     * @return Collection<int,array<string,mixed>>
+     */
+    protected function resolveReferencingModelRelation(ReflectedProperty $property, BelongsTo $relation, Collection $rows): Collection
+    {
+        $builder = new ModelQueryBuilder($relation->model, $this->connection);
+        $this->withSubRelations($builder, $property->name);
+
+        $keyColumn = $relation->keyColumn ?? $this->modelClass::key();
+
+        $keys = [];
+        foreach ($rows as $row) {
+            $keys[] = $row[$keyColumn];
+        }
+
+        $models = $builder
+            ->whereIn($keyColumn, $keys)
+            ->all()
+            ->groupBy($keyColumn);
+
+        foreach ($rows->keys() as $idx) {
+            $row = $rows[$idx];
+
+            $modelId = $row[$keyColumn];
+            $modelsForRow = $models[$modelId];
+
+            $row[$property->name] = $modelsForRow[0];
             $rows[$idx] = $row;
         }
 

@@ -4,11 +4,16 @@ namespace Brickhouse\Database\Transposer\Concerns;
 
 use Brickhouse\Database\Builder\QueryBuilder;
 use Brickhouse\Database\ConnectionManager;
+use Brickhouse\Database\Transposer\Model;
 use Brickhouse\Database\Transposer\ModelQueryBuilder;
 use Brickhouse\Support\Collection;
 
+/**
+ * @template TModel of Model
+ */
 trait HasModelQuery
 {
+    /** @use HasNamingStrategy<TModel> */
     use HasNamingStrategy;
 
     /**
@@ -52,6 +57,18 @@ trait HasModelQuery
     public static function all(): Collection
     {
         return static::query()->all();
+    }
+
+    /**
+     * Creates a new query builder which will load all the given relations.
+     *
+     * @param array<int,string>|string      $relations
+     *
+     * @return ModelQueryBuilder<static>
+     */
+    public static function with(array|string ...$relations): ModelQueryBuilder
+    {
+        return static::query()->with(...$relations);
     }
 
     /**

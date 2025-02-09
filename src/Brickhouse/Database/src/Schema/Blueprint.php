@@ -494,7 +494,7 @@ class Blueprint
      * @param class-string<TModel>      $model      Name of the foreign model.
      * @param null|string               $name       Name of the foreign key column.
      * @param null|string               $table      Name of the referenced table.
-     * @param null|string               $$key       Name of the referenced column primary key.
+     * @param null|string               $key        Name of the referenced column primary key.
      *
      * @return Column
      */

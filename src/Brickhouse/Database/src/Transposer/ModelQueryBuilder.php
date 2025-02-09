@@ -6,6 +6,8 @@ use Brickhouse\Database\Builder\QueryBuilder;
 use Brickhouse\Database\DatabaseConnection;
 use Brickhouse\Database\Transposer\Concerns;
 use Brickhouse\Database\Transposer\Model;
+use Brickhouse\Database\Transposer\Relations\BelongsTo;
+use Brickhouse\Database\Transposer\Relations\HasOne;
 use Brickhouse\Database\Transposer\Relations\HasRelation;
 use Brickhouse\Support\Collection;
 
@@ -52,7 +54,7 @@ class ModelQueryBuilder
      *
      * @return self<TModel>
      */
-    public function where(string $column, $operatorOrValue, $value = null): self
+    public function where(string $column, mixed $operatorOrValue, mixed $value = null): self
     {
         $this->builder->where($column, $operatorOrValue, $value);
         return $this;
@@ -128,7 +130,7 @@ class ModelQueryBuilder
      *
      * @return null|TModel
      */
-    public function find(string|int $id)
+    public function find(string|int $id): ?Model
     {
         $result = $this->builder
             ->where($this->modelClass::key(), '=', $id)
@@ -148,7 +150,7 @@ class ModelQueryBuilder
      *
      * @return null|TModel
      */
-    public function first(null|string|array $columns = null)
+    public function first(null|string|array $columns = null): ?Model
     {
         $result = $this->builder->first($columns);
         if ($result === null) {
@@ -167,14 +169,35 @@ class ModelQueryBuilder
      */
     public function insert(Model $model): Model
     {
-        $values = $model->getInsertableAttributes();
+        if ($model->modelState === Model::STATE_PERSISTING) {
+            return $model;
+        }
 
-        $model->id = $this->builder->insert($values)[0][$model::key()];
+        $this->finalizeRelationsBeforeSave($model);
 
-        // Update all the relational attributes of the model after saving the model itself.
-        $model->persistRelationalAttributes();
+        [$result] = $this->builder->insert(
+            $model->getInsertableAttributes()
+        );
 
-        return $model->refresh();
+        $model->id = $result[$model::key()];
+
+        return tap($model->refresh(), function (Model $model) {
+            $model->modelState = Model::STATE_PERSISTED;
+
+            $this->finalizeRelationsAfterSave($model);
+        });
+    }
+
+    /**
+     * Saves the given models to the database.
+     *
+     * @param array<int,TModel>|Collection<int,TModel>  $models
+     *
+     * @return Collection<int,TModel>
+     */
+    public function insertMany(array|Collection $models): Collection
+    {
+        return Collection::wrap($models)->map($this->insert(...));
     }
 
     /**
@@ -186,8 +209,13 @@ class ModelQueryBuilder
      */
     public function update(Model $model): Model
     {
-        // Update all the relational attributes of the model before updating the model itself.
-        $model->persistRelationalAttributes();
+        if ($model->modelState === Model::STATE_PERSISTING) {
+            return $model;
+        }
+
+        $this->finalizeRelationsBeforeSave($model);
+
+        $this->destroyDependentRelations($model);
 
         // Since we just updated all relations, we retrieve only the dirty attributes which
         // are non-relational.
@@ -197,7 +225,65 @@ class ModelQueryBuilder
             ->where('id', $model->id)
             ->update($attributesToUpdate);
 
-        return $model->refresh();
+        $this->finalizeRelationsBeforeSave($model);
+
+        return tap($model->refresh(), function (Model $model) {
+            $model->modelState = Model::STATE_PERSISTED;
+
+            $this->finalizeRelationsAfterSave($model);
+        });
+    }
+
+    /**
+     * Updates the given models in the database.
+     *
+     * @param array<int,TModel>|Collection<int,TModel>  $models
+     *
+     * @return Collection<int,TModel>
+     */
+    public function updateMany(array|Collection $models): Collection
+    {
+        return Collection::wrap($models)->map($this->update(...));
+    }
+
+    /**
+     * Insert the given model in the database, if it doesn't exist. Otherwise, updates the existing record.
+     *
+     * @param Model     $model
+     *
+     * @return Model
+     */
+    public function upsert(Model $model): Model
+    {
+        return $model->exists
+            ? $this->update($model)
+            : $this->insert($model);
+    }
+
+    /**
+     * Updates the given models in the database.
+     *
+     * @param array<int,TModel>|Collection<int,TModel>  $models
+     *
+     * @return Collection<int,TModel>
+     */
+    public function upsertMany(array|Collection $models): Collection
+    {
+        $models = Collection::wrap($models)->groupBy(
+            fn(Model $model) => $model->exists ? 1 : 0
+        );
+
+        $newModels = [];
+
+        if (isset($models[0])) {
+            $newModels += $this->insertMany($models[0])->toArray();
+        }
+
+        if (isset($models[1])) {
+            $newModels += $this->updateMany($models[1])->toArray();
+        }
+
+        return Collection::wrap($newModels);
     }
 
     /**
@@ -221,42 +307,110 @@ class ModelQueryBuilder
         return $model;
     }
 
-    protected function saveDependencyModelRelations(Model $model): void
+    /**
+     * Deletes all has-one relations, which are outdated and marked with `$destroyDependent = true`. This
+     * attempts to delete previous relations when a has-one relation is updated to prevent multiple resolved models.
+     *
+     * @param Model     $model
+     *
+     * @return void
+     */
+    protected function destroyDependentRelations(Model $model): void
     {
-        $mapModelAttributes = static function (string $foreignKey, mixed $parentId, Model $relationModel) {
-            $values = $relationModel->getInsertableAttributes();
-            $values[$foreignKey] = $parentId;
+        if ($model->modelState === Model::STATE_PERSISTING) {
+            return;
+        }
 
-            return $values;
-        };
+        $model->modelState = Model::STATE_PERSISTING;
+
+        $originalAttributes = $model->getOriginalAttributes();
 
         foreach ($model->getModelRelations() as $property => $relation) {
-            // This method only handles `HasRelation` relations, as the parent model is required
-            // to exist first, before these relations can be persisted to the database.
-            if (!$relation instanceof HasRelation) {
-                continue;
-            }
-
-            // If the property is unset on the model, skip it for now.
             if (!isset($model->$property)) {
                 continue;
             }
 
-            /** @var array<int,Model> $relationModels */
-            $relationModels = array_wrap($model->$property);
-
-            $foreignColumnName = $model::naming()->foreignKey();
-            $queryBuilder = new QueryBuilder($this->connection)->from($relation->model::table());
-
-            $newModels = array_filter($relationModels, fn(Model $model) => !$model->exists);
-            $newModels = array_map(
-                fn(Model $m) => $mapModelAttributes($foreignColumnName, $model->id, $m),
-                $newModels
-            );
-
-            if (!empty($newModels)) {
-                $queryBuilder->insert($newModels);
+            // If the relation is not a has-one relation or dependent destroy is not enabled, skip over it.
+            if (!$relation instanceof HasOne || !$relation->destroyDependent) {
+                continue;
             }
+
+            // If the attribute hasn't actually updated, we have nothing to delete.
+            if (!$model->isAttributeDirty($property) || !isset($originalAttributes[$property])) {
+                continue;
+            }
+
+            if (!($original = $originalAttributes[$property]) instanceof Model) {
+                throw new \RuntimeException(
+                    'Found non-Model instance in original attributes (' . $original::class . ')'
+                );
+            }
+
+            $original->delete();
         }
+
+        $model->modelState = Model::STATE_PERSISTED;
+    }
+
+    /**
+     * Finalizes and/or saves all relations on the given model when it's being persisted to the database.
+     *
+     * @param Model     $model
+     *
+     * @return void
+     */
+    protected function finalizeRelationsBeforeSave(Model $model): void
+    {
+        if ($model->modelState === Model::STATE_PERSISTING) {
+            return;
+        }
+
+        $model->modelState = Model::STATE_PERSISTING;
+
+        foreach ($model->getModelRelations() as $property => $relation) {
+            if (!isset($model->$property)) {
+                continue;
+            }
+
+            if (!$relation instanceof BelongsTo) {
+                continue;
+            }
+
+            $modelQueryBuilder = new ModelQueryBuilder($relation->model, $this->connection);
+            $modelQueryBuilder->upsertMany(Collection::wrap($model->$property));
+        }
+
+        $model->modelState = Model::STATE_PERSISTED;
+    }
+
+    /**
+     * Finalizes and/or saves all relations on the given model when it's being persisted to the database.
+     *
+     * @param Model     $model
+     *
+     * @return void
+     */
+    protected function finalizeRelationsAfterSave(Model $model): void
+    {
+        if ($model->modelState === Model::STATE_PERSISTING) {
+            return;
+        }
+
+        $model->modelState = Model::STATE_PERSISTING;
+
+        foreach ($model->getModelRelations() as $property => $relation) {
+            if (!isset($model->$property)) {
+                continue;
+            }
+
+            if (!$relation instanceof HasRelation) {
+                continue;
+            }
+
+            $modelQueryBuilder = new ModelQueryBuilder($relation->model, $this->connection);
+            $modelQueryBuilder->upsertMany(Collection::wrap($model->$property));
+        }
+
+        $model->modelState = Model::STATE_PERSISTED;
     }
 }
