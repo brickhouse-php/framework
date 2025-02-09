@@ -1,0 +1,61 @@
+{
+  "name": "brickhouse/validation",
+  "description": "Validation of objects and arrays for Brickhouse applications",
+  "license": "MIT",
+  "keywords": [
+    "framework",
+    "brickhouse",
+    "mvc"
+  ],
+  "homepage": "https://github.com/brickhouse-php/brickhouse",
+  "support": {
+    "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+    "source": "https://github.com/brickhouse-php/brickhouse"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Max T. Kristiansen",
+      "email": "me@maxtrier.dk",
+      "role": "Author",
+      "homepage": "https://maxtrier.dk"
+    }
+  ],
+  "require": {
+    "php": "^8.4",
+    "brickhouse/container": "dev-main",
+    "brickhouse/support": "dev-main",
+    "league/uri": "^7.5"
+  },
+  "require-dev": {
+    "brickhouse/database": "dev-main",
+    "brickhouse/testing": "dev-main",
+    "pestphp/pest": "^3.7",
+    "phpstan/phpstan": "^2.0"
+  },
+  "suggest": {
+    "brickhouse/database": "Allows for validating uniqueness on database models"
+  },
+  "autoload": {
+    "psr-4": {
+      "Brickhouse\\Validation\\": "src"
+    },
+    "classmap": [
+      "src/"
+    ],
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Brickhouse\\Validation\\Tests\\": "tests"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
