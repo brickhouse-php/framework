@@ -95,7 +95,7 @@ class Application extends Container
     /**
      * Deconstruct the application and reset global state.
      */
-    public final function __destruct()
+    public final function terminate()
     {
         self::$container = null;
         self::$instance = null;

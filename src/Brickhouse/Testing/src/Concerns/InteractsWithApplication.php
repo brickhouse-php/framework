@@ -28,6 +28,7 @@ trait InteractsWithApplication
     protected function tearDownTestEnvironment(): void
     {
         if ($this->app !== null) {
+            $this->app->terminate();
             $this->app = null;
         }
     }
