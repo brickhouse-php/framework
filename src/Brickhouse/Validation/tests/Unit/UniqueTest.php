@@ -6,7 +6,6 @@ use Brickhouse\Database\DatabaseConfig;
 use Brickhouse\Database\Schema\Blueprint;
 use Brickhouse\Database\Schema\Schema;
 use Brickhouse\Database\Sqlite\SqliteConnectionString;
-use Brickhouse\Database\Transposer\DatabaseModel;
 use Brickhouse\Database\Transposer\Model;
 use Brickhouse\Validation\Rules\Unique;
 use Brickhouse\Validation\Validator;
@@ -49,7 +48,7 @@ describe('Unique', function () {
         ]);
 
         $result = $validator->validate(
-            new User('Max T. Kristiansen', 'me@maxtrier.dk')
+            User::new(['name' => 'Max T. Kristiansen', 'email' => 'me@maxtrier.dk'])
         );
 
         expect($result->valid)->toBeTrue();
@@ -66,7 +65,7 @@ describe('Unique', function () {
         ]);
 
         $result = $validator->validate(
-            new User('Max T. Kristiansen', 'me@maxtrier.dk')
+            User::new(['name' => 'Max T. Kristiansen', 'email' => 'me@maxtrier.dk'])
         );
 
         expect($result->valid)->toBeTrue();
@@ -83,7 +82,7 @@ describe('Unique', function () {
         ]);
 
         $result = $validator->validate(
-            new User('Max T. Kristiansen', 'me@maxtrier.dk')
+            User::new(['name' => 'Max T. Kristiansen', 'email' => 'me@maxtrier.dk'])
         );
 
         expect($result->valid)->toBeFalse();
@@ -100,7 +99,7 @@ describe('Unique', function () {
         ]);
 
         $result = $validator->validate(
-            new Team('Marketing', 'Example Ltd.')
+            Team::new(['name' => 'Marketing', 'organization' => 'Example Ltd.'])
         );
 
         expect($result->valid)->toBeFalse();
@@ -117,7 +116,7 @@ describe('Unique', function () {
         ]);
 
         $result = $validator->validate(
-            new Team('Marketing', 'Example Ltd.')
+            Team::new(['name' => 'Marketing', 'organization' => 'Example Ltd.'])
         );
 
         expect($result->valid)->toBeTrue();
@@ -125,22 +124,16 @@ describe('Unique', function () {
     });
 })->group('validation', 'rule');
 
-class User implements Model
+class User extends Model
 {
-    use DatabaseModel;
+    public string $name;
 
-    public function __construct(
-        public string $name,
-        public string $email,
-    ) {}
+    public string $email;
 }
 
-class Team implements Model
+class Team extends Model
 {
-    use DatabaseModel;
+    public string $name;
 
-    public function __construct(
-        public string $name,
-        public string $organization,
-    ) {}
+    public string $organization;
 }
