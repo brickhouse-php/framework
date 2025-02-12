@@ -96,6 +96,19 @@ final class ReflectedProperty
     }
 
     /**
+     * Gets whether the property has asymmetric access.
+     *
+     * @return boolean
+     */
+    public function asymmetric(): bool
+    {
+        $modifiers = $this->instance->getModifiers();
+
+        return ($modifiers & \ReflectionProperty::IS_PROTECTED_SET !== 0) ||
+            ($modifiers & \ReflectionProperty::IS_PRIVATE_SET !== 0);
+    }
+
+    /**
      * Gets whether the property is static.
      *
      * @return boolean
