@@ -49,6 +49,7 @@
         "nunomaduro/termwind": "^2.3",
         "psr/container": "^2.0",
         "psr/event-dispatcher": "^1.0",
+        "salesforce/handlebars-php": "^3.0",
         "symfony/console": "^7.2",
         "symfony/finder": "^7.2",
         "toolkit/pflag": "^2.0"
@@ -74,6 +75,7 @@
         "brickhouse/log": "self.version",
         "brickhouse/process": "self.version",
         "brickhouse/reflection": "self.version",
+        "brickhouse/scaffold": "self.version",
         "brickhouse/support": "self.version",
         "brickhouse/testing": "self.version",
         "brickhouse/view": "self.version"
@@ -99,6 +101,7 @@
             "Brickhouse\\Log\\": "src/Brickhouse/Log/src",
             "Brickhouse\\Process\\": "src/Brickhouse/Process/src",
             "Brickhouse\\Reflection\\": "src/Brickhouse/Reflection/src",
+            "Brickhouse\\Scaffold\\": "src/Brickhouse/Scaffold/src",
             "Brickhouse\\Support\\": "src/Brickhouse/Support/src",
             "Brickhouse\\View\\": "src/Brickhouse/View/src"
         },
@@ -115,6 +118,7 @@
             "src/Brickhouse/Log/src/",
             "src/Brickhouse/Process/src/",
             "src/Brickhouse/Reflection/src/",
+            "src/Brickhouse/Scaffold/src/",
             "src/Brickhouse/Support/src/",
             "src/Brickhouse/Testing/src/",
             "src/Brickhouse/View/src/"
@@ -141,6 +145,7 @@
             "Brickhouse\\Database\\Tests\\": "src/Brickhouse/Database/tests",
             "Brickhouse\\Events\\Tests\\": "src/Brickhouse/Events/tests",
             "Brickhouse\\Http\\Tests\\": "src/Brickhouse/Http/tests",
+            "Brickhouse\\Scaffold\\Tests\\": "src/Brickhouse/Scaffold/tests",
             "Brickhouse\\Support\\Tests\\": "src/Brickhouse/Support/tests",
             "Brickhouse\\Testing\\": "src/Brickhouse/Testing/src/src",
             "Brickhouse\\Tests\\": "tests/"

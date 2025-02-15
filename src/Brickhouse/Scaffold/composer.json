@@ -1,0 +1,53 @@
+{
+  "name": "brickhouse/scaffold",
+  "description": "Scaffolding and stubbing functionality for CLI applications.",
+  "license": "MIT",
+  "keywords": [
+    "framework",
+    "brickhouse",
+    "mvc"
+  ],
+  "homepage": "https://github.com/brickhouse-php/brickhouse",
+  "support": {
+    "issues": "https://github.com/brickhouse-php/brickhouse/issues",
+    "source": "https://github.com/brickhouse-php/brickhouse"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Max T. Kristiansen",
+      "email": "me@maxtrier.dk",
+      "role": "Author",
+      "homepage": "https://maxtrier.dk"
+    }
+  ],
+  "require": {
+    "php": "^8.4",
+    "brickhouse/support": "dev-main",
+    "salesforce/handlebars-php": "^3.0"
+  },
+  "require-dev": {
+    "brickhouse/testing": "dev-main",
+    "pestphp/pest": "^3.7",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Brickhouse\\Scaffold\\": "src"
+    },
+    "classmap": [
+      "src/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Brickhouse\\Scaffold\\Tests\\": "tests"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
