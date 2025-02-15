@@ -21,6 +21,7 @@
     "require": {
         "php": "^8.4",
         "brickhouse/reflection": "dev-main",
+        "brickhouse/scaffold": "dev-main",
         "brickhouse/support": "dev-main",
         "toolkit/pflag": "^2.0",
         "symfony/console": "^7.2",

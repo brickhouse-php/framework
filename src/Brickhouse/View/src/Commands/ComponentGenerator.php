@@ -2,18 +2,13 @@
 
 namespace Brickhouse\View\Commands;
 
+use Brickhouse\Console\Attributes\Argument;
 use Brickhouse\Console\GeneratorCommand;
+use Brickhouse\Console\InputOption;
 use Brickhouse\Support\StringHelper;
 
 class ComponentGenerator extends GeneratorCommand
 {
-    /**
-     * The type of the class generated.
-     *
-     * @var string
-     */
-    public string $type = 'Component';
-
     /**
      * The name of the console command.
      *
@@ -28,45 +23,39 @@ class ComponentGenerator extends GeneratorCommand
      */
     public string $description = 'Scaffolds a new component.';
 
-    public function stub(): string
-    {
-        return __DIR__ . '/../Stubs/Component.stub.php.html';
-    }
+    /**
+     * Defines the name of the generated component.
+     *
+     * @var string
+     */
+    #[Argument("name", "Specifies the name of the component", InputOption::REQUIRED)]
+    public string $componentName = '';
 
-    protected function defaultNamespace(string $rootNamespace): string
+    /**
+     * @inheritDoc
+     */
+    protected function sourceRoot(): string
     {
-        return $rootNamespace . 'Views\\Components';
+        return __DIR__ . '/../Stubs/';
     }
 
     /**
-     * Gets the destination class path for the given class.
-     *
-     * @param  string  $name
-     *
-     * @return string
+     * @inheritDoc
      */
-    protected function getPath(string $name): string
+    public function handle(): int
     {
-        return component_path(strtolower($name) . '.php.html');
-    }
+        $this->componentName = StringHelper::from($this->componentName)
+            ->capitalize()
+            ->__toString();
 
-    /**
-     * Builds the content of the stub.
-     *
-     * @return string
-     */
-    protected function buildStub(string $path, string $name): string
-    {
-        $content = parent::buildStub($path, $name);
-
-        $segments = explode("/", $name);
-
-        $content = str_replace(
-            ["ComponentName"],
-            [StringHelper::from(end($segments))->snake('-')],
-            $content
+        $this->copy(
+            'Component.stub.php',
+            path('resources', 'views', 'components', $this->componentName . '.php.html'),
+            [
+                'componentName' => $this->componentName,
+            ]
         );
 
-        return $content;
+        return 0;
     }
 }

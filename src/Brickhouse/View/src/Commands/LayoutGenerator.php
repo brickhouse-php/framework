@@ -2,18 +2,13 @@
 
 namespace Brickhouse\View\Commands;
 
+use Brickhouse\Console\Attributes\Argument;
 use Brickhouse\Console\GeneratorCommand;
+use Brickhouse\Console\InputOption;
 use Brickhouse\Support\StringHelper;
 
 class LayoutGenerator extends GeneratorCommand
 {
-    /**
-     * The type of the class generated.
-     *
-     * @var string
-     */
-    public string $type = 'Layout';
-
     /**
      * The name of the console command.
      *
@@ -28,45 +23,39 @@ class LayoutGenerator extends GeneratorCommand
      */
     public string $description = 'Creates a new layout.';
 
-    public function stub(): string
-    {
-        return __DIR__ . '/../Stubs/Layout.stub.php.html';
-    }
+    /**
+     * Defines the name of the generated layout.
+     *
+     * @var string
+     */
+    #[Argument("name", "Specifies the name of the layout", InputOption::REQUIRED)]
+    public string $layoutName = '';
 
-    protected function defaultNamespace(string $rootNamespace): string
+    /**
+     * @inheritDoc
+     */
+    protected function sourceRoot(): string
     {
-        return $rootNamespace . 'Views\\Layouts';
+        return __DIR__ . '/../Stubs/';
     }
 
     /**
-     * Gets the destination class path for the given class.
-     *
-     * @param  string  $name
-     *
-     * @return string
+     * @inheritDoc
      */
-    protected function getPath(string $name): string
+    public function handle(): int
     {
-        return layout_path($name . '.php.html');
-    }
+        $this->layoutName = StringHelper::from($this->layoutName)
+            ->lower()
+            ->__toString();
 
-    /**
-     * Builds the content of the stub.
-     *
-     * @return string
-     */
-    protected function buildStub(string $path, string $name): string
-    {
-        $content = parent::buildStub($path, $name);
-
-        $segments = explode("/", $name);
-
-        $content = str_replace(
-            ["LayoutName"],
-            [StringHelper::from(end($segments))->title()],
-            $content
+        $this->copy(
+            'Component.stub.php',
+            path('resources', 'views', 'layouts', $this->layoutName . '.php.html'),
+            [
+                'layoutName' => StringHelper::from($this->layoutName)->title(),
+            ]
         );
 
-        return $content;
+        return 0;
     }
 }

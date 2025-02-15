@@ -2,21 +2,14 @@
 
 namespace Brickhouse\View\Commands;
 
+use Brickhouse\Console\Attributes\Argument;
 use Brickhouse\Console\Attributes\Option;
 use Brickhouse\Console\GeneratorCommand;
 use Brickhouse\Console\InputOption;
-use Brickhouse\Core\AppConfig;
 use Brickhouse\Support\StringHelper;
 
 class ViewGenerator extends GeneratorCommand
 {
-    /**
-     * The type of the class generated.
-     *
-     * @var string
-     */
-    public string $type = 'View';
-
     /**
      * The name of the console command.
      *
@@ -39,44 +32,53 @@ class ViewGenerator extends GeneratorCommand
     #[Option("json", null, "Create a JSON view instead of an HTML view.", InputOption::NEGATABLE)]
     public bool $json = false;
 
-    public function stub(): string
-    {
-        if ($this->json || resolve(AppConfig::class)->api_only) {
-            return __DIR__ . '/../Stubs/View.stub.php.json';
-        }
+    /**
+     * Defines the name of the generated view.
+     *
+     * @var string
+     */
+    #[Argument("name", "Specifies the name of the view", InputOption::REQUIRED)]
+    public string $viewName = '';
 
-        return __DIR__ . '/../Stubs/View.stub.php.html';
-    }
-
-    protected function defaultNamespace(string $rootNamespace): string
+    /**
+     * @inheritDoc
+     */
+    protected function sourceRoot(): string
     {
-        return $rootNamespace . 'Views';
+        return __DIR__ . '/../Stubs/';
     }
 
     /**
-     * Gets the destination class path for the given class.
-     *
-     * @param  string  $name
-     *
-     * @return string
+     * @inheritDoc
      */
-    protected function getPath(string $name): string
+    public function handle(): int
     {
-        $extension = $this->json ? '.php.json' : '.php.html';
+        $this->viewName = StringHelper::from($this->viewName)
+            ->lower()
+            ->__toString();
 
-        return view_path($name . $extension);
+        $ext = $this->json ? '.php.json' : '.php.html';
+        $stub = "View.stub{$ext}";
+
+        $this->copy(
+            $stub,
+            path('resources', 'views', $this->viewName . $ext),
+            [
+                ...$this->getControllerAction(),
+            ]
+        );
+
+        return 0;
     }
 
     /**
-     * Builds the content of the stub.
+     * Determines the name of the controller and action for the view.
      *
-     * @return string
+     * @return array{controller:string,action:string}
      */
-    protected function buildStub(string $path, string $name): string
+    protected function getControllerAction(): array
     {
-        $content = parent::buildStub($path, $name);
-
-        $segments = explode("/", $name);
+        $segments = explode("/", $this->viewName);
         $controllerName = $segments[0];
         $actionName = $segments[1] ?? null;
 
@@ -85,18 +87,13 @@ class ViewGenerator extends GeneratorCommand
             $controllerName = 'index';
         }
 
-        $content = str_replace(
-            [
-                "ControllerName",
-                "ActionName",
-            ],
-            [
-                StringHelper::from($controllerName)->end("Controller")->capitalize(),
-                $actionName,
-            ],
-            $content
-        );
+        $controllerName = StringHelper::from($controllerName)
+            ->end("Controller")
+            ->capitalize();
 
-        return $content;
+        return [
+            'controller' => $controllerName,
+            'action' => $actionName
+        ];
     }
 }

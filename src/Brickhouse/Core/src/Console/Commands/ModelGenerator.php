@@ -2,6 +2,7 @@
 
 namespace Brickhouse\Core\Console\Commands;
 
+use Brickhouse\Console\Attributes\Argument;
 use Brickhouse\Console\Attributes\Option;
 use Brickhouse\Console\GeneratorCommand;
 use Brickhouse\Console\InputOption;
@@ -9,13 +10,6 @@ use Brickhouse\Support\StringHelper;
 
 class ModelGenerator extends GeneratorCommand
 {
-    /**
-     * The type of the class generated.
-     *
-     * @var string
-     */
-    public string $type = 'Model';
-
     /**
      * The name of the console command.
      *
@@ -31,6 +25,14 @@ class ModelGenerator extends GeneratorCommand
     public string $description = 'Scaffolds a new database model.';
 
     /**
+     * Defines the name of the generated model.
+     *
+     * @var string
+     */
+    #[Argument("name", "Specifies the name of the model", InputOption::REQUIRED)]
+    public string $modelName = '';
+
+    /**
      * Defines whether to scaffold a migration for the model.
      *
      * @var bool
@@ -41,9 +43,9 @@ class ModelGenerator extends GeneratorCommand
     /**
      * @inheritDoc
      */
-    public function stub(): string
+    protected function sourceRoot(): string
     {
-        return __DIR__ . '/../../Stubs/Model.stub.php';
+        return __DIR__ . '/../../Stubs/';
     }
 
     /**
@@ -51,19 +53,18 @@ class ModelGenerator extends GeneratorCommand
      */
     public function handle(): int
     {
-        $result = parent::handle();
+        $this->copy(
+            'Model.stub.php',
+            path('src', 'Models', $this->modelName . '.php'),
+            [
+                'modelNamespace' => 'App\\Models',
+                'modelClass' => $this->modelName,
+            ]
+        );
 
         $this->createMigration();
 
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function defaultNamespace(string $rootNamespace): string
-    {
-        return $rootNamespace . 'Models';
+        return 0;
     }
 
     /**
@@ -78,9 +79,9 @@ class ModelGenerator extends GeneratorCommand
         }
 
         $this->call('generate:migration', [
-            'name' => StringHelper::from($this->className)->lower()->__toString(),
+            'name' => StringHelper::from($this->modelName)->lower()->__toString(),
             '--model',
-            $this->className,
+            $this->modelName,
             $this->force ? '--force' : '--no-force'
         ]);
     }

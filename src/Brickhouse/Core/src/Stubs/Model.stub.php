@@ -1,11 +1,10 @@
 <?php
 
-namespace NamespacePlaceholder;
+namespace {{ modelNamespace }};
 
-use Brickhouse\Database\IsModel;
-use Brickhouse\Database\Model;
+use Brickhouse\Database\Transposer\Model;
 
-class ClassNamePlaceholder implements Model
+class {{ modelClass }} extends Model
 {
-    use IsModel;
+    //
 }

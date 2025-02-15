@@ -2,42 +2,17 @@
 
 namespace Brickhouse\Console;
 
-use Brickhouse\Console\Attributes\Argument;
 use Brickhouse\Console\Attributes\Option;
-use Brickhouse\Support\StringHelper;
-
-use function Brickhouse\Console\Prompts\confirm;
+use Brickhouse\Scaffold\Scaffolder;
 
 abstract class GeneratorCommand extends Command
 {
-    public const string ROOT_NAMESPACE_PLACEHOLDER = 'RootNamespacePlaceholder';
-
-    public const string NAMESPACE_PLACEHOLDER = 'NamespacePlaceholder';
-
-    public const string CLASS_PLACEHOLDER = 'ClassNamePlaceholder';
-
     /**
-     * The type of the class generated.
+     * Defines the scaffolder for the generator.
      *
-     * @var string
+     * @var Scaffolder
      */
-    public abstract string $type { get; }
-
-    /**
-     * Defines the name of the generated class.
-     *
-     * @var string
-     */
-    #[Argument("name", "Specifies the name of the class", InputOption::REQUIRED)]
-    public string $className = '';
-
-    /**
-     * Defines which namespace to place the class into.
-     *
-     * @var string
-     */
-    #[Option("namespace", null, "Defines the namespace of the new class", InputOption::REQUIRED)]
-    public null|string $namespace = null;
+    private Scaffolder $scaffolder;
 
     /**
      * Defines whether to overwrite any existing files.
@@ -48,143 +23,103 @@ abstract class GeneratorCommand extends Command
     public bool $force = false;
 
     /**
-     * Execute the console command.
+     * Defines the root directory to search for stubbing templates.
+     *
+     * @return string
      */
-    public function handle(): int
+    protected abstract function sourceRoot(): string;
+
+    /**
+     * Gets the current scaffolder for the command.
+     *
+     * @return Scaffolder
+     */
+    protected function scaffolder(): Scaffolder
     {
-        $this->namespace ??= $this->defaultNamespace($this->rootNamespace());
-
-        $stubPath = $this->stub();
-
-        if (!file_exists($stubPath)) {
-            $this->error("Stub file does not exist: {$stubPath}");
-            return 1;
+        if (!isset($this->scaffolder)) {
+            $this->scaffolder = new Scaffolder($this->sourceRoot(), base_path());
         }
 
-        $this->className = StringHelper::from($this->className)
-            ->trim()
-            ->removeEnd('.php')
-            ->__toString();
-
-        $this->className = $this->getClass($this->className);
-
-        $destination = $this->getPath($this->className);
-        $content = $this->buildStub($stubPath, $this->className);
-
-        $this->ensureDirectoryExists($destination);
-
-        if (file_exists($destination)) {
-            if (!$this->force && !confirm("File <span class='font-bold'>[{$destination}]</span> already exists. Overwrite?")) {
-                return 0;
-            }
-        }
-
-        file_put_contents($destination, $content);
-
-        if (PHP_OS_FAMILY === 'Windows') {
-            $destination = str_replace('/', '\\', $destination);
-        }
-
-        $this->info("{$this->type} <span class='font-bold'>[{$destination}]</span> created successfully.");
-
-        return 0;
+        return $this->scaffolder;
     }
 
     /**
-     * Gets the stub file for the generator.
+     * Creates a new file from the template content given.
      *
-     * @return string
-     */
-    protected abstract function stub(): string;
-
-    /**
-     * Gets the class name for the given class.
-     *
-     * @param  string  $className
-     *
-     * @return string
-     */
-    protected function getClass(string $className): string
-    {
-        return $className;
-    }
-
-    /**
-     * Gets the destination class path for the given class.
-     *
-     * @param  string  $name
-     *
-     * @return string
-     */
-    protected function getPath(string $name): string
-    {
-        // If the given name is already a path, return it as-is.
-        if (str_starts_with($name, "./") || str_starts_with($name, ".\\")) {
-            return $name;
-        }
-
-        $name = str_replace('\\', '/', $this->namespace . '/' . $name);
-        $rootNamespace = str_replace('\\', '/', $this->rootNamespace());
-
-        // If the name is prefixed with the root namespace, lower-case it.
-        if (str_starts_with($name, $rootNamespace)) {
-            $name = substr_replace($name, strtolower($rootNamespace), 0, strlen($rootNamespace));
-        }
-
-        return base_path() . '/' . $name . '.php';
-    }
-
-    /**
-     * Gets the default namespace for the class.
-     *
-     * @param string    $rootNamespace
-     *
-     * @return string
-     */
-    protected function defaultNamespace(string $rootNamespace): string
-    {
-        return $rootNamespace;
-    }
-
-    /**
-     * Gets the root namespace for the application.
-     *
-     * @return string
-     */
-    protected function rootNamespace(): string
-    {
-        return 'App\\';
-    }
-
-    /**
-     * Builds the content of the stub.
-     *
-     * @return string
-     */
-    protected function buildStub(string $path, string $name): string
-    {
-        $content = file_get_contents($path);
-
-        $content = str_replace(
-            [self::ROOT_NAMESPACE_PLACEHOLDER, self::NAMESPACE_PLACEHOLDER, self::CLASS_PLACEHOLDER],
-            [rtrim($this->rootNamespace(), '\\'), $this->namespace, $name],
-            $content
-        );
-
-        return $content;
-    }
-
-    /**
-     * Ensures that the directory of the given path exists.
+     * @param string                $path           Destination for the file to create.
+     * @param string                $content        Template to place into the new file.
+     * @param array<string,mixed>   $data           Optional data to pass to the template.
      *
      * @return void
      */
-    protected function ensureDirectoryExists(string $path): void
+    protected function create(string $path, string $content, array $data = []): void
     {
-        $directory = dirname($path);
+        $this->ensureDirectoryExists(dirname($path));
 
-        if (!is_dir($directory)) {
-            mkdir($directory, recursive: true);
+        $this->scaffolder()->stubTemplate($content, $path, $data);
+
+        $this->printScaffoldAction('create', $path);
+    }
+
+    /**
+     * Copies an existing file to the given destination path.
+     *
+     * @param string                $path           Path of the file to copy.
+     * @param string                $destination    Destination for the file to copy to.
+     * @param array<string,mixed>   $data           Optional data to pass to the template.
+     *
+     * @return void
+     */
+    protected function copy(string $path, string $destination, array $data = []): void
+    {
+        $this->ensureDirectoryExists(dirname($destination));
+
+        $this->scaffolder()->stub($path, $destination, $data);
+
+        $this->printScaffoldAction('create', $destination);
+    }
+
+    /**
+     * Ensures that the directory given exists in the output directory.
+     *
+     * @param   string  $path       Path to the directory, relative to the destination root.
+     *
+     * @return void
+     */
+    private function ensureDirectoryExists(string $path): void
+    {
+        if (@is_dir($path)) {
+            return;
         }
+
+        @mkdir($path, recursive: true);
+
+        $this->printScaffoldAction('exist', $path);
+    }
+
+    /**
+     * Prints a log message for the given scaffolding action.
+     *
+     * @param   string  $action         Scaffolding action performed.
+     * @param   string  $arg            Argument to show next to the action.
+     *
+     * @return void
+     */
+    private function printScaffoldAction(string $action, string $arg): void
+    {
+        $actionColor = match ($action) {
+            'create' => 'text-green-400',
+            'exist' => 'text-indigo-400',
+            'update' => 'text-teal-500',
+            'delete' => 'text-red-500',
+            default => 'text-gray-500',
+        };
+
+        $this->writeHtml(<<<HTML
+            <div class='text-gray-400'>
+                <div class="w-12 {$actionColor} font-bold text-right mr-2">{$action}</div>
+                {$arg}
+            </div>
+        HTML);
     }
 }
